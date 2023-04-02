@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Create news</title>
+</head>
+<body>
+    <form id="create-news-form" method="post" th:object="${createNewsRequest}" action="/news/create" enctype="multipart/form-data">
+        <label for="news-title">Tiêu đề</label>
+        <input type="text" id="news-title" th:field="*{title}">
+        <label for="news-category">Thể loại</label>
+        <input type="text" id="news-category" th:field="*{category}">
+        <label for="news-category">Nội dung</label>
+        <input type="text" id="news-content" th:field="*{content}">
+        <label for="news-img">Ảnh</label>
+        <input type="file" id="news-img" th:field="*{img}">
+        <th:block th:if="*{paragraphNumber} != null">
+            <div th:each="para, stat : *{paragraphRequests}">
+                <label for="para-title">Tiêu đề đoạn văn</label>
+                <input id="para-title" type="text" th:field="*{paragraphRequests[__${stat.index}__].title}">
+                <label for="para-content">Nội dung đoạn văn</label>
+                <input id="para-content" type="text" th:field="*{paragraphRequests[__${stat.index}__].content}">
+                <label for="para-img">Ảnh đoạn văn</label>
+                <input id="para-img" type="file" th:name="|paragraphRequests[${stat.index}].img|">
+                <label for="para-video">Video đoạn văn</label>
+                <input id="para-video" type="file" th:name="|paragraphRequests[${stat.index}].video|">
+            </div>
+        </th:block>
+        <th:block th:unless="*{paragraphNumber} != null">
+            <label for="para-number">Số đoạn văn</label>
+            <input id="para-number" type="number" th:field="*{paragraphNumber}">
+        </th:block>
+        <button id="create-para" type="submit">Tạo đoạn văn</button>
+        <button id="create-news" type="submit">Tạo bài báo</button>
+    </form>
+    <script type="text/javascript">
+        const createNewsBtn = document.getElementById("create-news");
+        const form = document.getElementById("create-news-form")
+        createNewsBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            form.setAttribute('action', '/news/create/process');
+            form.submit();
+        })
+    </script>
+</body>
+</html>
