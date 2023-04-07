@@ -3,37 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <title>Create news</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <form id="create-news-form" method="post" th:object="${createNewsRequest}" action="/news/create" enctype="multipart/form-data">
-        <label for="news-title">Tiêu đề</label>
-        <input type="text" id="news-title" th:field="*{title}">
-        <label for="news-category">Thể loại</label>
-        <input type="text" id="news-category" th:field="*{category}">
-        <label for="news-category">Nội dung</label>
-        <input type="text" id="news-content" th:field="*{content}">
-        <label for="news-img">Ảnh</label>
-        <input type="file" id="news-img" th:field="*{img}">
-        <th:block th:if="*{paragraphNumber} != null">
-            <div th:each="para, stat : *{paragraphRequests}">
-                <label for="para-title">Tiêu đề đoạn văn</label>
-                <input id="para-title" type="text" th:field="*{paragraphRequests[__${stat.index}__].title}">
-                <label for="para-content">Nội dung đoạn văn</label>
-                <input id="para-content" type="text" th:field="*{paragraphRequests[__${stat.index}__].content}">
-                <label for="para-img">Ảnh đoạn văn</label>
-                <input id="para-img" type="file" th:name="|paragraphRequests[${stat.index}].img|">
-                <label for="para-video">Video đoạn văn</label>
-                <input id="para-video" type="file" th:name="|paragraphRequests[${stat.index}].video|">
+    <div style="position: fixed; top: 20px; left: 20px">
+        <div th:if="${newsErrors}">
+            <div th:each="error : ${newsErrors}">
+                <p th:text="${error}" style="color: red"></p>
             </div>
-        </th:block>
-        <th:block th:unless="*{paragraphNumber} != null">
-            <label for="para-number">Số đoạn văn</label>
-            <input id="para-number" type="number" th:field="*{paragraphNumber}">
-        </th:block>
-        <button id="create-para" type="submit">Tạo đoạn văn</button>
-        <button id="create-news" type="submit">Tạo bài báo</button>
-    </form>
+        </div>
+        <div th:if="${errors}">
+            <div th:each="error : ${errors}">
+                <p th:text="${error}" style="color: red"></p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h2 style="margin: 30px">Tạo bài báo</h2>
+        <div class="bg-light" style="padding: 50px; width: 50%;">
+            <form novalidate="novalidate" id="create-news-form"
+                  method="post" th:object="${createNewsRequest}" action="/news/create" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="control-group">
+                            <input
+                                    type="text"
+                                    class="form-control p-4"
+                                    id="news-title"
+                                    placeholder="Tiêu đề"
+                                    required="required"
+                                    th:field="*{title}"
+                            />
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="control-group">
+                            <input
+                                    type="text"
+                                    class="form-control p-4"
+                                    id="news-category"
+                                    placeholder="Thể loại"
+                                    required="required"
+                                    th:field="*{category}"
+                            />
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group" th:classappend="${createNewsRequest.paragraphNumber == null} ? '' : d-none">
+                    <input
+                            type="number"
+                            class="form-control p-4"
+                            id="para-number"
+                            placeholder="Số đoạn văn"
+                            th:field="*{paragraphNumber}"
+                    />
+                    <p class="help-block text-primary"></p>
+                </div>
+                <div class="control-group">
+                  <textarea
+                          class="form-control p-4"
+                          rows="4"
+                          id="news-content"
+                          placeholder="Nội dung"
+                          required="required"
+                          th:field="*{content}"
+                  ></textarea>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="custom-file" th:if="*{paragraphNumber} != null">
+                    <input
+                            type="file"
+                            id="news-img"
+                            class="upload-file custom-file-input"
+                            th:field="*{img}"
+                    />
+                    <label class="custom-file-label" for="news-img">Chọn ảnh chính</label>
+                </div>
+                <th:block th:if="*{paragraphNumber} != null">
+                    <div th:each="para, stat : *{paragraphRequests}" style="margin: 20px">
+                        <h3 th:text="'Đoạn ' + ${stat.index + 1}"></h3>
+                        <div class="control-group">
+                            <input
+                                    type="text"
+                                    class="form-control p-4 mb-3"
+                                    id="para-title"
+                                    placeholder="Tiêu đề"
+                                    th:field="*{paragraphRequests[__${stat.index}__].title}"
+                            />
+                        </div>
+                        <div class="control-group">
+                            <textarea
+                              class="form-control mb-3"
+                              rows="4"
+                              id="para-content"
+                              placeholder="Nội dung"
+                              required="required"
+                                th:field="*{paragraphRequests[__${stat.index}__].content}"
+                            ></textarea>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input
+                                    type="file"
+                                    id="para-img"
+                                    placeholder="Gắn ảnh"
+                                    class="upload-file custom-file-input"
+                                    th:name="|paragraphRequests[${stat.index}].img|"
+                            />
+                            <label class="custom-file-label" for="para-img">Chọn ảnh</label>
+                        </div>
+                        <div class="custom-file mb-3">
+                            <input
+                                    type="file"
+                                    id="para-video"
+                                    class="upload-file custom-file-input mb-3"
+                                    th:name="|paragraphRequests[${stat.index}].video|"
+                            />
+                            <label class="custom-file-label" for="para-video">Chọn video</label>
+                        </div>
+                    </div>
+                </th:block>
+                <div style="display: flex; justify-content: end">
+                    <button
+                            class="btn btn-dark font-weight-semi-bold px-4"
+                            style="height: 50px; margin-right: 5px"
+                            type="submit"
+                            id="create-para"
+                    >
+                        Tạo đoạn
+                    </button>
+                    <button
+                            class="btn btn-primary font-weight-semi-bold px-4"
+                            style="height: 50px"
+                            type="submit"
+                            id="create-news"
+                    >
+                        Tạo bài
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script type="text/javascript">
+        //form submit event
         const createNewsBtn = document.getElementById("create-news");
         const form = document.getElementById("create-news-form")
         createNewsBtn.addEventListener('click', function (event) {
@@ -41,6 +157,24 @@
             form.setAttribute('action', '/news/create/process');
             form.submit();
         })
+
+        //file size validate
+        $(document).ready(function () {
+            $('.upload-file').change(function () {
+                if (this.files[0].size > 100 * 1024 * 1024) {
+                    $(this).val('');
+                    alert('Dung lượng file không được vượt quá 100 MB');
+                }
+            })
+        })
+    </script>
+
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
     </script>
 </body>
 </html>

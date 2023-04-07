@@ -18,6 +18,7 @@ public class Paragraph {
 
     private String videoUrl;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne

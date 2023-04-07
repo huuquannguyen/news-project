@@ -1,13 +1,17 @@
 package com.qtiger.news.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class NewsEntity {
 
     @Id
@@ -18,6 +22,7 @@ public class NewsEntity {
 
     private String category;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String imgUrl;
@@ -25,5 +30,9 @@ public class NewsEntity {
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
     private List<Paragraph> paragraphs;
 
-    private Timestamp createdDate;
+    @CreatedDate
+    private Date createdDate;
+
+    @LastModifiedDate
+    private Date updatedDate;
 }

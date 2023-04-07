@@ -14,7 +14,7 @@ public class CreateNewsRequest {
     @NotBlank(message = "Tiêu đề báo không thể để trống")
     private String title;
 
-    @NotBlank(message = "Loại báo không thể để trống")
+    @NotBlank(message = "Thể loại báo không thể để trống")
     private String category;
 
     @NotBlank(message = "Nội dung bài báo không thể để trống")

@@ -1,12 +1,13 @@
 package com.qtiger.news.service;
 
 import com.qtiger.news.entity.NewsEntity;
+import com.qtiger.news.exception.AppException;
 import com.qtiger.news.model.CreateNewsRequest;
 
 import java.io.IOException;
 
 public interface NewsService {
-    Long createNews(CreateNewsRequest newsRequest) throws IOException;
+    Long createNews(CreateNewsRequest newsRequest) throws IOException, AppException;
 
     Long updateNews(Long id);
 

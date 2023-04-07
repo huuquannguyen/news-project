@@ -8,10 +8,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CreateParagraphRequest {
 
-    @NotBlank(message = "Tiêu đề không thể để trống")
+    @NotBlank(message = "Tiêu đề đoạn văn không thể để trống")
     private String title;
 
-    @NotBlank(message = "Nội dung không thể để trống")
+    @NotBlank(message = "Nội dung đoạn văn không thể để trống")
     private String content;
 
     private MultipartFile img;
