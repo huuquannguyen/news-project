@@ -115,7 +115,7 @@
                             <div class="mb-3">
                                 <a href="" th:text="${news.category}"> News category </a>
                                 <span class="px-1">/</span>
-                                <span th:text="${news.updatedDate}">January 01, 2045</span>
+                                <span th:text="${news.updatedDateManual != null ? news.updatedDateManual : news.updatedDate}">January 01, 2045</span>
                             </div>
                             <div>
                                 <h3 class="mb-3" th:text="${news.title}"> News title </h3>
@@ -127,7 +127,7 @@
                                              th:classappend="${stat.index % 2 == 0} ? 'mr-4 float-left': 'ml-4 float-right'">
                                         <p th:text="${para.content}"> Paragraph content </p>
                                     </div>
-                                    <video class="mb-4" style="width: 100%" controls>
+                                    <video class="mb-4" style="width: 100%" controls th:if="${para.videoUrl != null}">
                                         <source th:src="@{${para.videoUrl}}" type="video/mp4">
                                     </video>
                                 </th:block>

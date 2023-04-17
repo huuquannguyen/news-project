@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Update news</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <style>
+        .edit {
+            width: 20px;
+            cursor: pointer;
+            display: none;
+            margin-left: 10px;
+        }
+        h4:hover .edit{
+            display: inline-block;
+        }
+        h3 {
+            margin-bottom: 20px;
+        }
+        .global-container{
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0,0,0,0.5);
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+        .pop{
+            display: flex;
+        }
+        .unpop{
+            display: none;
+            animation-name: close;
+            animation-duration: 0.3s;
+        }
+        @keyframes grow{
+            0%{
+                transform: scale(0.5,0.5)
+            }
+            100%{
+                transform: scale(1,1)
+            }
+        }
+
+        .window{
+            text-align: center;
+            animation-name: grow;
+            animation-duration: 0.3s;
+        }
+        .head-msg{
+            background-color: #dfdfdf;
+            width: 100%;
+            padding: 1rem;
+            font-weight: bolder;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-bottom: 0;
+        }
+        .main-msg{
+            background-color: #fff;
+            width: 100%;
+            padding: 2rem 1rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        .confirm{
+            background-color: #dfdfdf;
+            width: 100%;
+            padding: 1rem;
+            text-align: right;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            font-weight: bold;
+        }
+        .delete{
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+        }
+        .delete:hover {
+            background-color: #bb0e1f;
+        }
+        .cancel{
+            background-color: #777;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+        }
+        .cancel:hover {
+            background-color: #3a3636;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: fixed; top: 20px; left: 20px">
+        <div th:if="${newsErrors}">
+            <div th:each="error : ${newsErrors}">
+                <p th:text="${error}" style="color: red"></p>
+            </div>
+        </div>
+        <div th:if="${errors}">
+            <div th:each="error : ${errors}">
+                <p th:text="${error}" style="color: red"></p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h2 style="margin: 30px">Chỉnh sửa bài báo</h2>
+
+        <div class="bg-light" style="padding: 50px; width: 50%; position: relative">
+
+            <button
+                    class="btn btn-secondary font-weight-semi-bold px-4"
+                    style="height: 50px; margin-right: 5px; position: absolute; top: 15px; right: 15px"
+                    type="submit"
+                    id="delete-news"
+            >
+                Xóa bài
+            </button>
+
+            <div class="global-container" id="global">
+                <div class="window">
+                    <p class="head-msg">Bạn có chắc chắn muốn xóa không?</p>
+                    <p class="main-msg">Hành động này không thể hoàn tác!</p>
+                    <div class="confirm">
+                        <button class="cancel">Hủy</button>
+                        <button class="delete">Xóa</button>
+                    </div>
+                </div>
+            </div>
+
+            <form novalidate="novalidate" id="update-news-form"
+                  method="post" th:object="${updateNewsRequest}" th:action="@{/news/update/} + ${news.id}" enctype="multipart/form-data">
+
+                <h4>Loại bài <img src="/img/edit-icon.png" class="edit e-news-mainPage"></h4>
+                <p th:text="${news.mainPage ? 'Bài chính' : 'Bài thường'}"></p>
+                <div class="form-row mb-3 updated-news" id="news-mainPage">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="radio" id="news-main-page-true" th:field="*{mainPage}" value="true">
+                            <label class="form-check-label" for="news-main-page-true">Đặt làm bài chính</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="radio" id="news-main-page-false" th:field="*{mainPage}" value="false">
+                            <label class="form-check-label" for="news-main-page-false">Đặt làm bài thường</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Tiêu đề <img src="/img/edit-icon.png" class="edit e-news-title"></h4>
+                <p th:text="${news.title}"></p>
+                <div class="control-group mb-3">
+                    <input
+                            type="text"
+                            class="form-control p-4 updated-news"
+                            id="news-title"
+                            placeholder="Tiêu đề mới"
+                            required="required"
+                            th:field="*{title}"
+                    />
+                </div>
+
+                <h4>Thể loại <img src="/img/edit-icon.png" class="edit e-news-category"></h4>
+                <p th:text="${news.category}"></p>
+                <div class="control-group mb-3">
+                    <input
+                            type="text"
+                            class="form-control p-4 updated-news"
+                            id="news-category"
+                            placeholder="Thể loại mới"
+                            required="required"
+                            th:field="*{category}"
+                    />
+                </div>
+
+                <h4>Thời gian tạo <img src="/img/edit-icon.png" class="edit e-news-updated-date-manual"></h4>
+                <p th:text="${news.updatedDate}"></p>
+                <div class="control-group mb-3">
+                    <input
+                            type="datetime-local"
+                            class="form-control p-4 updated-news"
+                            id="news-updated-date-manual"
+                            placeholder="Chọn thời gian tạo mới"
+                            required="required"
+                            th:field="*{updatedDateManual}"
+                    />
+                </div>
+
+                <h4>View <img src="/img/edit-icon.png" class="edit e-news-view"></h4>
+                <p th:text="${news.view}"></p>
+                <div class="control-group mb-3">
+                    <input
+                            type="number"
+                            class="form-control p-4 updated-news"
+                            id="news-view"
+                            placeholder="Nhập số view mới"
+                            required="required"
+                            th:field="*{view}"
+                    />
+                </div>
+
+                <h4>Nội dụng <img src="/img/edit-icon.png" class="edit e-news-content"> </h4>
+                <p th:text="${news.content}"></p>
+                <div class="control-group">
+                      <textarea
+                              class="form-control p-4 updated-news mb-3"
+                              rows="4"
+                              id="news-content"
+                              placeholder="Nội dung mới"
+                              required="required"
+                              th:field="*{content}"
+                      ></textarea>
+                </div>
+
+                <h4>Ảnh chính <img src="/img/edit-icon.png" class="edit e-news-img-div"> </h4>
+                <img th:src="@{${news.imgUrl}}" style="max-width: 100%" class="mb-3">
+                <div id="news-img-div" class="custom-file updated-news mb-3">
+                    <input
+                            type="file"
+                            id="news-img"
+                            class="upload-file custom-file-input"
+                            th:field="*{img}"
+                    />
+                    <label class="custom-file-label" for="news-img">Chọn ảnh chính mới</label>
+                </div>
+
+                <th:block th:if="${news.paragraphs} != null">
+                    <div th:each="para, stat : ${news.paragraphs}" style="margin: 20px; border-top: 3px red solid; padding: 10px">
+                        <h3 th:text="'Đoạn ' + ${stat.index + 1}"></h3>
+                        <input type="hidden" th:name="|updateParagraphRequests[${stat.index}].paraId|" th:value="${para.id}">
+                        <h4>Tiêu đề đoạn <img src="/img/edit-icon.png" th:class="'edit e-para-title-' + ${stat.index}"></h4>
+                        <p th:text="${news.paragraphs[__${stat.index}__].title}"></p>
+                        <div class="control-group">
+                            <input
+                                    type="text"
+                                    class="form-control p-4 mb-3 updated-news"
+                                    th:id="'para-title-' + ${stat.index}"
+                                    placeholder="Tiêu đề đoạn mới"
+                                    th:field="*{updateParagraphRequests[__${stat.index}__].title}"
+                            />
+                        </div>
+
+                        <h4>Nội dung đoạn <img src="/img/edit-icon.png" th:class="'edit e-para-content-' + ${stat.index}"> </h4>
+                        <p th:text="${news.paragraphs[__${stat.index}__].content}"></p>
+                        <div class="control-group">
+                                <textarea
+                                        class="form-control mb-3 updated-news"
+                                        rows="4"
+                                        th:id="'para-content-' + ${stat.index}"
+                                        placeholder="Nội dung đoạn mới"
+                                        required="required"
+                                        th:field="*{updateParagraphRequests[__${stat.index}__].content}"
+                                ></textarea>
+                        </div>
+
+                        <h4>Ảnh <img src="/img/edit-icon.png" th:class="'edit e-para-img-div-' + ${stat.index}"></h4>
+                        <img th:src="@{${news.paragraphs[__${stat.index}__].imgUrl}}" style="max-width: 100%" class="mb-3">
+                        <div th:id="'para-img-div-' + ${stat.index}" class="custom-file mb-3  updated-news">
+                            <input
+                                    type="file"
+                                    id="para-img"
+                                    placeholder="Gắn ảnh"
+                                    class="upload-file custom-file-input mb-3"
+                                    th:name="|updateParagraphRequests[${stat.index}].img|"
+                            />
+                            <label class="custom-file-label" for="para-img">Chọn ảnh mới</label>
+                        </div>
+
+                        <h4>Video <img src="/img/edit-icon.png" th:class="'edit e-para-video-div-' + ${stat.index}"></h4>
+                        <video style="max-width: 100%" controls th:if="${news.paragraphs[__${stat.index}__].videoUrl} != null">
+                            <source th:src="@{${news.paragraphs[__${stat.index}__].videoUrl}}" type="video/mp4">
+                        </video>
+                        <div th:id="'para-video-div-' + ${stat.index}" class="custom-file mb-3 updated-news">
+                            <input
+                                    type="file"
+                                    id="para-video"
+                                    class="upload-file custom-file-input mb-3"
+                                    th:name="|updateParagraphRequests[${stat.index}].video|"
+                            />
+                            <label class="custom-file-label" for="para-video">Chọn video mới</label>
+                        </div>
+                    </div>
+                </th:block>
+
+                <th:block th:each="addedPara , stat : *{addedParagraphRequests}">
+                    <h3 th:text="'Đoạn thêm ' + ${stat.index + 1}"></h3>
+                    <div class="control-group">
+                        <input
+                                type="text"
+                                class="form-control p-4 mb-3"
+                                id="added-para-title"
+                                placeholder="Tiêu đề"
+                                th:field="*{addedParagraphRequests[__${stat.index}__].title}"
+                        />
+                    </div>
+                    <div class="control-group">
+                                <textarea
+                                        class="form-control mb-3"
+                                        rows="4"
+                                        id="added-para-content"
+                                        placeholder="Nội dung"
+                                        required="required"
+                                        th:field="*{addedParagraphRequests[__${stat.index}__].content}"
+                                ></textarea>
+                    </div>
+                    <div class="custom-file mb-3">
+                        <input
+                                type="file"
+                                id="added-para-img"
+                                placeholder="Gắn ảnh"
+                                class="upload-file custom-file-input"
+                                th:name="|addedParagraphRequests[${stat.index}].img|"
+                        />
+                        <label class="custom-file-label" for="added-para-img">Chọn ảnh</label>
+                    </div>
+                    <div class="custom-file mb-3">
+                        <input
+                                type="file"
+                                id="added-para-video"
+                                class="upload-file custom-file-input mb-3"
+                                th:name="|addedParagraphRequests[${stat.index}].video|"
+                        />
+                        <label class="custom-file-label" for="added-para-video">Chọn video</label>
+                    </div>
+                </th:block>
+
+                <div class="control-group" th:classappend="${updateNewsRequest.addedParaNumber == null} ? '' : d-none">
+                    <input
+                            type="number"
+                            class="form-control p-4"
+                            id="para-number"
+                            placeholder="Số đoạn văn thêm "
+                            th:field="*{addedParaNumber}"
+                    />
+                    <p class="help-block text-primary"></p>
+                </div>
+
+                <div style="display: flex; justify-content: end">
+                    <button
+                            class="btn btn-dark font-weight-semi-bold px-4"
+                            style="height: 50px; margin-right: 5px"
+                            type="submit"
+                            id="add-para"
+                    >
+                        Thêm đoạn
+                    </button>
+                    <button
+                            class="btn btn-primary font-weight-semi-bold px-4"
+                            style="height: 50px"
+                            type="submit"
+                            id="update-news"
+                    >
+                        Sửa bài
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        //delete
+        let del = document.getElementById("delete-news");
+        let popWin = document.querySelector(".global-container");
+        let cancelButton = document.querySelector(".cancel");
+
+        del.addEventListener("click",popIt);
+        function popIt(){
+            popWin.classList.remove("unpop");
+            popWin.classList.add("pop");
+        }
+
+        cancelButton.addEventListener("click",unPopIt);
+        function unPopIt(){
+            popWin.classList.remove("pop");
+            popWin.classList.add("unpop");
+        }
+
+        popWin.addEventListener("click",outWin);
+        function outWin(e){
+            if (e.target.id === "global"){
+                unPopIt();
+            }
+        }
+
+        //form submit event
+        const createNewsBtn = document.getElementById("update-news");
+        const form = document.getElementById("update-news-form")
+        createNewsBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            const id = '[[${news.id}]]'
+            form.setAttribute('action', `/news/update/${id}/process`);
+            form.submit();
+        })
+
+        $(document).ready(function () {
+            //file size validate
+            $('.upload-file').change(function () {
+                if (this.files[0].size > 100 * 1024 * 1024) {
+                    $(this).val('');
+                    alert('Dung lượng file không được vượt quá 100 MB');
+                }
+            })
+
+            //update
+            $('.updated-news').hide();
+
+            $('.edit').click(function () {
+                const inputId = $(this).attr('class').split(/\s+/)[1].substring(2);
+                $('#' + inputId).toggle();
+            })
+
+            //delete
+            $('.delete').click(function () {
+                const newsId = '[[${news.id}]]';
+                const form = $('<form></form>');
+                form.attr('action', `/news/delete/${newsId}`);
+                form.attr('method', 'post');
+                $('body').append(form);
+                form.submit();
+            })
+        })
+    </script>
+
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+</body>
+</html>

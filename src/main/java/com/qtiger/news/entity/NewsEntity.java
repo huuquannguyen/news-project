@@ -30,9 +30,15 @@ public class NewsEntity {
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
     private List<Paragraph> paragraphs;
 
+    private int view;
+
+    private boolean mainPage;
+
     @CreatedDate
     private Date createdDate;
 
     @LastModifiedDate
     private Date updatedDate;
+
+    private Date updatedDateManual;
 }

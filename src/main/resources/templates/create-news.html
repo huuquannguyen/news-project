@@ -25,6 +25,20 @@
         <div class="bg-light" style="padding: 50px; width: 50%;">
             <form novalidate="novalidate" id="create-news-form"
                   method="post" th:object="${createNewsRequest}" action="/news/create" enctype="multipart/form-data">
+                <div class="form-row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="radio" id="news-main-page-true" th:field="*{mainPage}" value="true">
+                            <label class="form-check-label" for="news-main-page-true">Bài chính</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="radio" id="news-main-page-false" th:field="*{mainPage}" value="false">
+                            <label class="form-check-label" for="news-main-page-false">Bài thường</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col-md-6">
                         <div class="control-group">
@@ -53,17 +67,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="control-group" th:classappend="${createNewsRequest.paragraphNumber == null} ? '' : d-none">
+                <div class="control-group mb-3">
                     <input
                             type="number"
                             class="form-control p-4"
-                            id="para-number"
-                            placeholder="Số đoạn văn"
-                            th:field="*{paragraphNumber}"
+                            id="news-view"
+                            placeholder="View"
+                            th:field="*{view}"
                     />
-                    <p class="help-block text-primary"></p>
                 </div>
-                <div class="control-group">
+                <div class="control-group mb-3">
+                    <label for="news-updated-date-manual">Thời gian tạo</label>
+                    <input
+                            type="datetime-local"
+                            class="form-control p-4 updated-news"
+                            id="news-updated-date-manual"
+                            placeholder="Chọn thời gian tạo"
+                            required="required"
+                            th:field="*{updatedDateManual}"
+                    />
+                </div>
+                <div class="control-group mb-3">
                   <textarea
                           class="form-control p-4"
                           rows="4"
@@ -72,9 +96,17 @@
                           required="required"
                           th:field="*{content}"
                   ></textarea>
-                    <p class="help-block text-danger"></p>
                 </div>
-                <div class="custom-file" th:if="*{paragraphNumber} != null">
+                <div class="control-group mb-3" th:classappend="${createNewsRequest.paragraphNumber == null} ? '' : d-none">
+                    <input
+                            type="number"
+                            class="form-control p-4"
+                            id="para-number"
+                            placeholder="Số đoạn văn"
+                            th:field="*{paragraphNumber}"
+                    />
+                </div>
+                <div class="custom-file mb-3" th:if="*{paragraphNumber} != null">
                     <input
                             type="file"
                             id="news-img"

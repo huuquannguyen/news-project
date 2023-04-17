@@ -44,6 +44,19 @@ public class FileUtil {
         return "/" + fileLocation + "/" + fileName;
     }
 
+    public static void deleteFile(String fileUrl) {
+        if (Objects.isNull(fileUrl) || fileUrl.isEmpty()) {
+            return;
+        }
+        Path path = Paths.get(fileUrl.substring(1));
+        try {
+            Files.delete(path);
+            log.debug("Deleted file with url: {}", fileUrl);
+        } catch (IOException e) {
+            log.error("Failed to delete file with url: {}", fileUrl);
+        }
+    }
+
     public static boolean validateFileType(String fileExtension, String fileType) {
         List<String> imageExtensions = List.of(".jpg", ".png", ".jpeg", ".gif", ".svg");
         if (!fileType.equals("IMAGE") && !fileType.equals("VIDEO")) {
