@@ -18,4 +18,6 @@ public interface NewsService {
     NewsEntity getNews(Long id);
 
     List<NewsEntity> searchListNews(String type, String cateType, String keyword, int limit);
+
+    NewsEntity increaseView(Long id);
 }

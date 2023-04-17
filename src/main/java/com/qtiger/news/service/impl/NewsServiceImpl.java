@@ -140,6 +140,16 @@ public class NewsServiceImpl implements NewsService {
         }
     }
 
+    @Override
+    public NewsEntity increaseView(Long id) {
+        NewsEntity news = newsRepository.findById(id).orElse(null);
+        if (Objects.nonNull(news)) {
+            news.setView(news.getView() + 1);
+            return newsRepository.save(news);
+        }
+        return null;
+    }
+
     private List<NewsEntity> searchByKeyTitle(String keyword, int limit) {
         Pageable pageable = pagination(0, "updatedDate", limit);
         return newsRepository.findByTitleContainingIgnoreCase(keyword, pageable).toList();
@@ -171,7 +181,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private List<NewsEntity> searchTrending (String keyword, int limit) {
-        return searchWithKeyword(searchByConstraintDate(limit, 1), keyword);
+        List<NewsEntity> trending = searchByConstraintDate(limit, 1);
+        List<NewsEntity> result = new ArrayList<>(trending);
+        if (result.size() < limit) {
+            List<Long> trendingIds = trending.stream().map(NewsEntity::getId).collect(Collectors.toList());
+            Pageable pageable = pagination(0, "updatedDateManual", limit - result.size());
+            List<NewsEntity> latest = newsRepository.findAllByIdIsNotIn(trendingIds, pageable).toList();
+            result.addAll(latest);
+        }
+        return searchWithKeyword(result, keyword);
     }
 
     private List<NewsEntity> searchPopular (String keyword, int limit) {

@@ -114,7 +114,7 @@ $.ajax({
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             let element = `<div class="position-relative">
-                            <div style="height: 200px">
+                            <div id="cate-img-div" style="height: 200px">
                                 <img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover;">
                             </div>
                             <div class="overlay position-relative bg-light">
@@ -139,6 +139,15 @@ $.ajax({
                 $('#cate-slide-sport').prepend(element);
             }
         }
+        let css = `<style>
+                        @media only screen and (max-width: 770px) {
+                            #cate-img-div {
+                                height: auto !important; 
+                                max-height: 400px !important;
+                            }
+                        }
+                    </style>`;
+        $('head').append(css);
         runCategorySlide();
     }
 });
@@ -151,7 +160,7 @@ $.ajax({
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             if (i <= 1 ) {
-                let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover;">
+                let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover; max-height: 350px">
                                 <div class="overlay position-relative bg-light">
                                     <div class="mb-2" style="font-size: 14px;">
                                         <a href="">${response[i].category}</a>
@@ -187,7 +196,7 @@ $.ajax({
             let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="">${response[i].title}</a></div>`
             $('#top-latest-slider').prepend(topLatestElement);
             if (i <= 1 ) {
-                let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover;">
+                let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover; max-height: 350px">
                                 <div class="overlay position-relative bg-light">
                                     <div class="mb-2" style="font-size: 14px;">
                                         <a href="">${response[i].category}</a>
@@ -234,7 +243,7 @@ $.ajax({
                         </div>`
             $('#trending').append(element);
             if (i < 4) {
-                let topElement = `<div class="d-flex">
+                let topElement = `<div class="d-flex" style="background-color: #ffffff">
                     <img src="${response[i].imgUrl}" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="d-flex align-items-center bg-light px-3" style="height: 80px;">
                         <a class="text-secondary font-weight-semi-bold" href="">${response[i].title}</a>

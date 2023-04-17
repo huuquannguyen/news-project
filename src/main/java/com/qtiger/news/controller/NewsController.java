@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -35,7 +37,11 @@ public class NewsController {
 
     @GetMapping("/{id}")
     public String singlePage(@PathVariable Long id, Model model){
-        NewsEntity newsEntity = newsService.getNews(id);
+        NewsEntity newsEntity = newsService.increaseView(id);
+        if (!Objects.nonNull(newsEntity)) {
+            return "redirect:/";
+        }
+        Date date = newsEntity.getUpdatedDateManual();
         model.addAttribute("news", newsEntity);
         return "single.html";
     }

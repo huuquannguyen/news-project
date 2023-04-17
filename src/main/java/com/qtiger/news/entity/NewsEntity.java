@@ -1,5 +1,6 @@
 package com.qtiger.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -35,10 +36,13 @@ public class NewsEntity {
     private boolean mainPage;
 
     @CreatedDate
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date createdDate;
 
     @LastModifiedDate
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date updatedDate;
 
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date updatedDateManual;
 }

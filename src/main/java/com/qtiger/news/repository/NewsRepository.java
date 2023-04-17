@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface NewsRepository extends JpaRepository<NewsEntity, Long> {
@@ -23,4 +24,6 @@ public interface NewsRepository extends JpaRepository<NewsEntity, Long> {
     Page<NewsEntity> findByMainPageIsTrue(Pageable pageable);
 
     Page<NewsEntity> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+
+    Page<NewsEntity> findAllByIdIsNotIn(List<Long> ids, Pageable pageable);
 }
