@@ -400,7 +400,7 @@
         createNewsBtn.addEventListener('click', function (event) {
             event.preventDefault();
             const id = '[[${news.id}]]'
-            form.setAttribute('action', `/news/update/${id}/process`);
+            form.setAttribute('action', `/admin/news/update/${id}/process`);
             form.submit();
         })
 
@@ -422,12 +422,10 @@
             })
 
             //delete
-            $('.delete').click(function () {
+            const deleteBtn = document.querySelector('.delete');
+            deleteBtn.addEventListener('click', function () {
                 const newsId = '[[${news.id}]]';
-                const form = $('<form></form>');
-                form.attr('action', `/news/delete/${newsId}`);
-                form.attr('method', 'post');
-                $('body').append(form);
+                form.setAttribute('action', `/admin/news/delete/${newsId}`);
                 form.submit();
             })
         })

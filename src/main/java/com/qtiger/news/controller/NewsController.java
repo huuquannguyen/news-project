@@ -50,7 +50,7 @@ public class NewsController {
     @GetMapping("/news/{id}")
     public String singlePage(@PathVariable Long id, Model model, Principal principal) {
         if (Objects.nonNull(principal)) {
-            model.addAttribute("authenticated");
+            model.addAttribute("authenticated", true);
         }
         NewsEntity newsEntity = newsService.increaseView(id);
         if (!Objects.nonNull(newsEntity)) {
@@ -65,7 +65,12 @@ public class NewsController {
                              @RequestParam(required = false, defaultValue = "") String cateType,
                              @RequestParam(required = false, defaultValue = "") String keyword,
                              @RequestParam(required = false, defaultValue = "5") String limit,
-                             Model model) {
+                             Model model, Principal principal) {
+
+        if (Objects.nonNull(principal)) {
+            model.addAttribute("authenticated", true);
+        }
+
         int limitNumber;
         try {
             limitNumber = Integer.parseInt(limit);

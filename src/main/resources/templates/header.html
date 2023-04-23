@@ -56,6 +56,7 @@
                     </div>
                 </div>
                 <a id="nav-contact" href="/contact" class="nav-item nav-link">Contact</a>
+                <a th:if="${authenticated}" th:href="@{/admin/news/create}" id="create-news" class="nav-item nav-link">Create News</a>
                 <a th:if="${authenticated}" th:href="@{/logout}" id="logout" class="nav-item nav-link">Logout</a>
             </div>
                 <form id="searchForm" action="/news/search/key" method="get">
