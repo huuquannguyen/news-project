@@ -87,7 +87,7 @@ function latestSlider() {
 //mainpage
 $.ajax({
     type : 'GET',
-    url: '/news/search/main-page',
+    url: '/api/news/search/main-page',
     success: function(response) {
         for (let i = response.length - 1; i >= 0; i--) {
             let element = $(`<div id="main-page-${i}" class="position-relative overflow-hidden" style="height: 435px;">
@@ -110,7 +110,7 @@ $.ajax({
 // category
 $.ajax({
     type: 'GET',
-    url: '/news/search/category?cateType=all',
+    url: '/api/news/search/category?cateType=all',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             let element = `<div class="position-relative">
@@ -156,7 +156,7 @@ $.ajax({
 //popular
 $.ajax({
     type: 'GET',
-    url: '/news/search/popular?limit=6',
+    url: '/api/news/search/popular?limit=6',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             if (i <= 1 ) {
@@ -190,7 +190,7 @@ $.ajax({
 //latest
 $.ajax({
     type: 'GET',
-    url: '/news/search/latest?limit=6',
+    url: '/api/news/search/latest?limit=6',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="">${response[i].title}</a></div>`
@@ -227,7 +227,7 @@ $.ajax({
 //trending and top slider
 $.ajax({
     type: 'GET',
-    url: 'news/search/trending?limit=5',
+    url: '/api/news/search/trending?limit=5',
     success: function(response) {
         for (let i = 0; i < response.length; i++) {
             let element = `<div class="d-flex mb-3">

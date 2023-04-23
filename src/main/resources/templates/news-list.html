@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>NEWSROOM - Free Bootstrap Magazine Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        .post-media {
+            position: relative;
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: #111111;
+        }
+
+        h4 a:hover {
+            text-decoration: underline !important;
+            color: #111111; !important;
+        }
+
+        .post-media img {
+            width: 100%;
+            transition: all .3s ease-in-out;
+            transform: scale(1);
+        }
+
+        .hovereffect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transition: all .3s ease-in-out;
+            zoom: 1;
+            opacity: 0.5;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 50%);
+        }
+
+        .blog-list .blog-meta.big-meta h4 {
+            margin-left: -20%;
+            margin-top: 1rem;
+            background-color: #ffffff;
+            padding: 1rem 1.5rem 1rem;
+            font-size: 24px;
+        }
+
+        h4 {
+            font-weight: 600 !important;
+            line-height: 29px;
+            color: #111111;
+        }
+
+        .blog-meta.big-meta p {
+            margin-bottom: 0.5rem;
+            padding-bottom: 0;
+            font-size: 15px;
+            line-height: 26px;
+            color: #5e5e5e;
+        }
+
+        .blog-meta small a, .blog-meta small {
+            font-weight: 500;
+            color: #999 !important;
+        }
+
+        .blog-meta small {
+            font-size: 11px;
+            display: inline-block;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            color: #111111;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .blog-meta small.firstsmall:after {
+            content: "" !important;
+            padding-left: 0;
+        }
+
+        .blog-meta .bg-orange {
+            color: #ffffff !important;
+            padding: 0 0.8rem;
+            border-radius: 3px;
+        }
+
+        .blog-meta small a, .blog-meta small {
+            font-weight: 500;
+        }
+
+        .bg-orange {
+            background-color: #FF6347 !important;
+        }
+
+        .post-media:hover .hovereffect span::before,
+        .post-media:hover .hovereffect {
+            visibility: visible;
+            zoom: 1;
+            filter: alpha(opacity=100);
+            opacity: 1;
+        }
+
+        .post-media:hover img,
+        .masonry-box:hover img {
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            -o-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .blog-meta small:after {
+            content: "/";
+            padding-left: 1rem;
+        }
+
+        .blog-meta small:last-child:after {
+            content: "";
+        }
+
+         #nav-breadcrumb a {
+             color: #ED1C24 !important;
+         }
+        #nav-breadcrumb a:hover {
+            text-decoration: underline !important;
+            color: rgb(175, 14, 20) !important;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Topbar Start -->
+    <div th:replace="header::topbar"></div>
+    <!-- Topbar End -->
+
+    <!-- Navbar Start -->
+    <div th:replace="header::navbar"></div>
+    <!-- Navbar End -->
+
+    <div class="container-fluid">
+        <div class="container">
+            <nav id="nav-breadcrumb" class="breadcrumb bg-transparent m-0 p-0">
+                <a class="breadcrumb-item" href="/">Home</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container-fluid py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-4">
+                            <h3 id="page-title" class="m-0">Popular</h3>
+                        </div>
+                    </div>
+                    <div class="blog-list clearfix">
+                        <th:block th:each="news : ${newsList}">
+                            <div class="blog-box row mb-5">
+                                <div class="col-md-4">
+                                    <div class="post-media">
+                                        <a th:href="@{/news/{id}(id=${news.id})}" title="">
+                                            <img th:src="${news.imgUrl}" alt="" class="img-fluid">
+                                            <div class="hovereffect"></div>
+                                        </a>
+                                    </div><!-- end media -->
+                                </div><!-- end col -->
+
+                                <div class="blog-meta big-meta col-md-8">
+                                    <h4><a th:href="@{/news/{id}(id=${news.id})}" title="" th:text="${news.title}">News title</a></h4>
+                                    <p th:text="${news.content}"></p>
+                                    <small class="firstsmall">
+                                        <a class="bg-orange"
+                                           th:href="@{/news/search/category(cateType=${news.category})}"
+                                           th:text="${news.category}">
+                                        </a>
+                                    </small>
+                                    <small><span th:text="${news.updatedDateManual}">21 July 2017</span></small>
+                                    <small><span>by Matilda</span></small>
+                                    <small> <i class="fa fa-eye"></i> <span th:text="${news.view}"></span> </small>
+                                </div><!-- end meta -->
+                            </div><!-- end blog-box -->
+                        </th:block>
+                    </div>
+                    <div th:if="${showSeeMore}" class="d-flex justify-content-center">
+                        <a class="btn btn-primary font-weight-semi-bold px-4" style="display: block" id="seeMoreBtn" href="#">See more</a>
+                    </div>
+                </div>
+                <div th:replace="sidebar::sidebar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div th:replace="footer::footer"></div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-dark back-to-top"><i class="fa fa-angle-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/easing/easing.min.js"></script>
+    <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="/mail/jqBootstrapValidation.min.js"></script>
+    <script src="/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/js/main.js"></script>
+    <script src="/js/fragment.js"></script>
+
+    <script>
+
+        const nextLimit = '[[${nextLimit}]]';
+        searchParams.set('limit', nextLimit);
+        $('#seeMoreBtn').attr('href', pathName + '?' + searchParams.toString());
+
+        if (searchType !== null && searchType !== '') {
+            searchType = upperCaseFirstLetter(searchType.toLowerCase());
+
+            if (searchType.toLowerCase() !== 'category') {
+                $('#page-title').text(searchType);
+                $('#nav-breadcrumb').append(`<span class="breadcrumb-item active">${searchType}</span>`);
+            } else {
+                $('#nav-breadcrumb').append(`<a class="breadcrumb-item" href="#">Category</a>`);
+                if (cateType !== null && cateType !== '') {
+                    $('#nav-breadcrumb').append(`<span class="breadcrumb-item active">${upperCaseFirstLetter(cateType)}</span>`)
+                    $('#page-title').text(upperCaseFirstLetter(cateType));
+                }
+            }
+        }
+
+        $('#searchForm').attr('action', pathName + '?' + searchParams.toString());
+
+        function upperCaseFirstLetter(text) {
+            const firstLetter = text.charAt(0).toUpperCase();
+            const remainingLetters = text.slice(1);
+            return firstLetter + remainingLetters;
+        }
+
+    </script>
+</body>
+</html>

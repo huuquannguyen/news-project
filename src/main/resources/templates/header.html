@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 text-right d-none d-md-block">
+        <div id="today" class="col-md-4 text-right d-none d-md-block">
             Monday, January 01, 2045
         </div>
     </div>
@@ -41,20 +41,33 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-between px-0 px-lg-3" id="navbarCollapse">
-            <div class="navbar-nav mr-auto py-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="category.html" class="nav-item nav-link">Categories</a>
-                <a href="single.html" class="nav-item nav-link">Single News</a>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
+            <div id="nav-items" class="navbar-nav mr-auto py-0">
+                <a id="nav-home" href="/" class="nav-item nav-link active">Home</a>
+                <a id="nav-popular" href="/news/search/popular" class="nav-item nav-link">Popular</a>
+                <a id="nav-latest" href="/news/search/latest" class="nav-item nav-link">Latest</a>
+                <a id="nav-trending" href="/news/search/trending" class="nav-item nav-link">Trending</a>
+                <div id="cate-dropdown" class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Categories</a>
+                    <div class="dropdown-menu rounded-0 m-0">
+                        <a id="nav-technology" href="/news/search/category?cateType=technology" class="dropdown-item">Technology</a>
+                        <a id="nav-business" href="/news/search/category?cateType=business" class="dropdown-item">Business</a>
+                        <a id="nav-sport" href="/news/search/category?cateType=sport" class="dropdown-item">Sport</a>
+                        <a id="nav-entertainment" href="/news/search/category?cateType=entertainment" class="dropdown-item">Entertainment</a>
+                    </div>
+                </div>
+                <a id="nav-contact" href="/contact" class="nav-item nav-link">Contact</a>
                 <a th:if="${authenticated}" th:href="@{/logout}" id="logout" class="nav-item nav-link">Logout</a>
             </div>
-            <div class="input-group ml-auto" style="width: 100%; max-width: 300px;">
-                <input type="text" class="form-control" placeholder="Keyword">
-                <div class="input-group-append">
-                    <button class="input-group-text text-secondary"><i
-                            class="fa fa-search"></i></button>
-                </div>
-            </div>
+                <form id="searchForm" action="/news/search/key" method="get">
+                    <div class="input-group ml-auto" style="width: 100%; max-width: 300px;">
+                        <input type="hidden" name="cateType" th:value="${cateType}">
+                        <input id="searchInput" type="text" class="form-control" placeholder="Keyword" name="keyword" th:value="${keyword}">
+                        <div class="input-group-append">
+                            <button type="submit" id="searchBtn" class="input-group-text text-secondary"><i
+                                    class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
         </div>
     </nav>
 </div>

@@ -45,7 +45,7 @@ function latestSlider() {
 //trending and top slider
 $.ajax({
     type: 'GET',
-    url: '/news/search/trending?limit=5',
+    url: '/api/news/search/trending?limit=5',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             let element = `<div class="d-flex mb-3">
@@ -76,7 +76,7 @@ $.ajax({
 
 $.ajax({
     type: 'GET',
-    url: '/news/search/latest?limit=6',
+    url: '/api/news/search/latest?limit=6',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
             let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="">${response[i].title}</a></div>`
@@ -85,3 +85,46 @@ $.ajax({
         latestSlider();
     }
 });
+
+//nav active
+$('#nav-items a').removeClass('active');
+
+const pathName = $(location).attr('pathname');
+const pathNameSplit = pathName.split("/");
+let searchType = '';
+
+if (pathNameSplit.includes('search')) {
+    searchType = pathNameSplit[pathNameSplit.length - 1];
+}
+
+let searchParams = new URLSearchParams(window.location.search);
+let cateType = searchParams.get('cateType');
+
+if (pathNameSplit.includes('contact')) {
+    $('#nav-contact').addClass('active');
+} else if (searchType !== '') {
+    if (cateType != null && cateType !== '') {
+        $(`#nav-${cateType.toLowerCase()}`).addClass('active');
+    } else {
+        $(`#nav-${searchType.toLowerCase()}`).addClass('active');
+    }
+} else {
+    $('#nav-home').addClass('active');
+}
+
+
+//today
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const today = new Date();
+const day = days[today.getDay()];
+const date = today.getDate()
+const month = months[today.getMonth()];
+const year = today.getFullYear();
+
+$('#today').text(day + ', ' + month + ' ' + date + ', ' + year);
+
+//header search
+$('#header-search').click(function (){
+
+})

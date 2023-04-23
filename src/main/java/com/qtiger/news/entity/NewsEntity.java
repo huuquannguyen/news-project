@@ -36,13 +36,13 @@ public class NewsEntity {
     private boolean mainPage;
 
     @CreatedDate
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern="dd MMM yyyy")
     private Date createdDate;
 
     @LastModifiedDate
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern="dd MMM yyyy")
     private Date updatedDate;
 
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern="dd MMM yyyy")
     private Date updatedDateManual;
 }
