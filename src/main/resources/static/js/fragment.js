@@ -52,11 +52,11 @@ $.ajax({
                             <img src="${response[i].imgUrl}" style="width: 100px; height: 100px; object-fit: cover;">
                             <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
                                 <div class="mb-1" style="font-size: 13px;">
-                                    <a href="">${response[i].category}</a>
+                                    <a href="/news/search/${response[i].category}">${response[i].category}</a>
                                     <span class="px-1">/</span>
                                     <span>${response[i].updatedDateManual}</span>
                                 </div>
-                                <a class="h6 m-0" href="">${response[i].title}</a>
+                                <a class="h6 m-0" href="/news/${response[i].id}">${response[i].title}</a>
                             </div>
                         </div>`
             $('#trending').append(element);
@@ -64,7 +64,7 @@ $.ajax({
                 let topElement = `<div class="d-flex" style="background-color: #ffffff">
                     <img src="${response[i].imgUrl}" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="d-flex align-items-center bg-light px-3" style="height: 80px;">
-                        <a class="text-secondary font-weight-semi-bold" href="">${response[i].title}</a>
+                        <a class="text-secondary font-weight-semi-bold" href="/news/${response[i].id}">${response[i].title}</a>
                     </div>
                 </div>`
                 $('#top-slider').prepend(topElement);
@@ -79,7 +79,7 @@ $.ajax({
     url: '/api/news/search/latest?limit=6',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
-            let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="">${response[i].title}</a></div>`
+            let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="/news/${response[i].id}">${response[i].title}</a></div>`
             $('#top-latest-slider').prepend(topLatestElement);
         }
         latestSlider();
@@ -123,8 +123,3 @@ const month = months[today.getMonth()];
 const year = today.getFullYear();
 
 $('#today').text(day + ', ' + month + ' ' + date + ', ' + year);
-
-//header search
-$('#header-search').click(function (){
-
-})

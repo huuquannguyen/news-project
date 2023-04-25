@@ -1,5 +1,6 @@
 package com.qtiger.news.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qtiger.news.entity.NewsEntity;
 import com.qtiger.news.service.NewsService;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +66,7 @@ public class NewsController {
                              @RequestParam(required = false, defaultValue = "") String cateType,
                              @RequestParam(required = false, defaultValue = "") String keyword,
                              @RequestParam(required = false, defaultValue = "5") String limit,
-                             Model model, Principal principal) {
+                             Model model, Principal principal) throws JsonProcessingException {
 
         if (Objects.nonNull(principal)) {
             model.addAttribute("authenticated", true);

@@ -138,9 +138,9 @@
     <div class="container-fluid">
         <div class="container">
             <nav class="breadcrumb bg-transparent m-0 p-0">
-                <a class="breadcrumb-item" href="#">Home</a>
-                <a class="breadcrumb-item" href="#">Category</a>
-                <a class="breadcrumb-item" href="#" th:text="${news.category}">Technology</a>
+                <a class="breadcrumb-item" href="/">Home</a>
+                <a class="breadcrumb-item" href="">Category</a>
+                <a class="breadcrumb-item" th:href="@{/news/search/category?cateType=} + ${news.category}" th:text="${news.category}">Technology</a>
                 <span class="breadcrumb-item active" th:text="${news.title}">News Title</span>
             </nav>
         </div>
@@ -157,11 +157,9 @@
                     <div id="news" class="position-relative mb-3">
                         <form th:id="'delete-form-' + ${news.id}" hidden th:action="@{/admin/news/delete/} + ${news.id}" method="post">
                         </form>
-                        <div id="actions" style="position: absolute; right: 0; top: 0; background-color: white; opacity: 0.5; padding: 10px">
-                            <img th:if="${authenticated}"
-                                 src="/img/edit-icon.png" th:class="'edit-action admin-action edit-action-' + ${news.id}">
-                            <img th:if="${authenticated}"
-                                 src="/img/bin-icon.png" th:class="'delete-action admin-action delete-action-' + ${news.id}"
+                        <div th:if="${authenticated}" id="actions" style="position: absolute; right: 0; top: 0; background-color: white; opacity: 0.5; padding: 10px">
+                            <img src="/img/edit-icon.png" th:class="'edit-action admin-action edit-action-' + ${news.id}">
+                            <img src="/img/bin-icon.png" th:class="'delete-action admin-action delete-action-' + ${news.id}"
                                  style="margin-left: 15px">
                         </div>
                         <img class="img-fluid w-100" th:src="@{${news.imgUrl}}" style="object-fit: cover;">
@@ -169,7 +167,9 @@
                             <div class="mb-3">
                                 <a href="" th:text="${news.category}"> News category </a>
                                 <span class="px-1">/</span>
-                                <span th:text="${news.updatedDateManual != null ? news.updatedDateManual : news.updatedDate}">January 01, 2045</span>
+                                <span id="created-date"
+                                      th:text="${T(com.qtiger.news.util.ViewUtil).parseDate(news.updatedDateManual)}">
+                                </span>
                             </div>
                             <div>
                                 <h3 class="mb-3" th:text="${news.title}"> News title </h3>

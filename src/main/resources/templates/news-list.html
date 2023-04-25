@@ -238,6 +238,15 @@
         .cancel:hover {
             background-color: #3a3636;
         }
+        
+        @media (max-width: 768px) {
+            .blog-list .blog-meta.big-meta h4 {
+                background-color: #f2f2f2;
+                margin-left: 0;
+                margin-top: 1rem;
+                padding: 1rem 0;
+            }
+        }
 
     </style>
 </head>
@@ -264,7 +273,7 @@
                 <div class="col-lg-8">
                     <div>
                         <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-4">
-                            <h3 id="page-title" class="m-0">Popular</h3>
+                            <h3 id="page-title" class="m-0"></h3>
                         </div>
                     </div>
                     <div class="blog-list clearfix">
@@ -293,14 +302,16 @@
                                              th:class="'delete-action admin-action delete-action-' + ${news.id}"
                                              style="position: absolute; right: 0; top: -20px">
                                     </h4>
-                                    <p th:text="${news.content}"></p>
+                                    <p th:text="${news.content}" class="text-truncate"
+                                       style="display:-webkit-box; -webkit-line-clamp: 2;-webkit-box-orient: vertical; white-space: normal">
+                                    </p>
                                     <small class="firstsmall">
                                         <a class="bg-orange"
                                            th:href="@{/news/search/category(cateType=${news.category})}"
                                            th:text="${news.category}">
                                         </a>
                                     </small>
-                                    <small><span th:text="${news.updatedDateManual}">21 July 2017</span></small>
+                                    <small><span class="format-date" th:text="${news.getUpdatedDateManual() != null ? news.getUpdatedDateManual().toInstant() : ''}">21 July 2017</span></small>
                                     <small><span>by Matilda</span></small>
                                     <small> <i class="fa fa-eye"></i> <span th:text="${news.view}"></span> </small>
                                 </div><!-- end meta -->
@@ -411,6 +422,14 @@
                     $('#delete-form-' + newsId).submit();
                 })
             }
+        })
+
+        //date
+        $('.format-date').each(function () {
+            const createdDate = $(this).text();
+            let formattedDate = new Date(createdDate);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            $(this).text(formattedDate.toLocaleDateString("en-US", options));
         })
 
     </script>

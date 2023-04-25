@@ -94,11 +94,11 @@ $.ajax({
                             <img class="img-fluid h-100" src="${response[i].imgUrl}" style="object-fit: cover;">
                             <div class="overlay">
                                 <div class="mb-1">
-                                    <a class="text-white" href="">${response[i].category}</a>
+                                    <a class="text-white" href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                     <span class="px-2 text-white">/</span>
-                                    <a class="text-white" href="">${response[i].updatedDateManual}</a>
+                                    <span class="text-white" href="">${response[i].updatedDateManual}</span>
                                 </div>
-                                <a class="h2 m-0 text-white font-weight-bold" href="">${response[i].title}</a>
+                                <a class="h2 m-0 text-white font-weight-bold" href="/news/${response[i].id}">${response[i].title}</a>
                             </div>
                         </div>`);
             $('#main-page-slide').prepend(element);
@@ -119,11 +119,11 @@ $.ajax({
                             </div>
                             <div class="overlay position-relative bg-light">
                                 <div class="mb-2" style="font-size: 13px;">
-                                    <a href="">${response[i].category}</a>
+                                    <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                     <span class="px-1">/</span>
                                     <span>${response[i].updatedDateManual}</span>
                                 </div>
-                                <a class="h4 m-0" href="">${response[i].title}</a>
+                                <a class="h4 m-0" href="/news/${response[i].id}">${response[i].title}</a>
                             </div>
                         </div>`
             if (response[i].category === 'Business') {
@@ -163,23 +163,27 @@ $.ajax({
                 let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover; max-height: 350px">
                                 <div class="overlay position-relative bg-light">
                                     <div class="mb-2" style="font-size: 14px;">
-                                        <a href="">${response[i].category}</a>
+                                        <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                         <span class="px-1">/</span>
                                         <span>${response[i].updatedDateManual}</span>
                                     </div>
-                                    <a class="h4" href="">${response[i].title}</a>
-                                    <p class="m-0">${response[i].content}</p>
+                                    <a class="h4" href="/news/${response[i].id}">${response[i].title}</a>
+                                    <p class="m-0 text-truncate"
+                                        style="display:-webkit-box;
+                                        -webkit-line-clamp: 2;
+                                        -webkit-box-orient: vertical; 
+                                        white-space: normal">${response[i].content}</p>
                                 </div>`;
                 $(`#popular-${i+1}`).append(element);
             } else {
                 let element = `<img src="${response[i].imgUrl}" style="width: 100px; height: 100px; object-fit: cover;">
                                 <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
                                     <div class="mb-1" style="font-size: 13px;">
-                                        <a href="">${response[i].category}</a>
+                                        <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                         <span class="px-1">/</span>
                                         <span>${response[i].updatedDateManual}</span>
                                     </div>
-                                    <a class="h6 m-0" href="">${response[i].title}</a>
+                                    <a class="h6 m-0" href="/news/${response[i].id}">${response[i].title}</a>
                                 </div>`
                 $(`#popular-${i+1}`).append(element);
             }
@@ -193,29 +197,33 @@ $.ajax({
     url: '/api/news/search/latest?limit=6',
     success: function (response) {
         for (let i = 0; i < response.length; i++) {
-            let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="">${response[i].title}</a></div>`
+            let topLatestElement = `<div class="text-truncate"><a class="text-secondary" href="/news/${response[i].id}">${response[i].title}</a></div>`
             $('#top-latest-slider').prepend(topLatestElement);
             if (i <= 1 ) {
                 let element = `<img class="img-fluid w-100" src="${response[i].imgUrl}" style="object-fit: cover; max-height: 350px">
                                 <div class="overlay position-relative bg-light">
                                     <div class="mb-2" style="font-size: 14px;">
-                                        <a href="">${response[i].category}</a>
+                                        <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                         <span class="px-1">/</span>
                                         <span>${response[i].updatedDateManual}</span>
                                     </div>
-                                    <a class="h4" href="">${response[i].title}</a>
-                                    <p class="m-0">${response[i].content}</p>
+                                    <a class="h4" href="/news/${response[i].id}">${response[i].title}</a>
+                                    <p class="m-0 text-truncate"
+                                        style="display:-webkit-box;
+                                        -webkit-line-clamp: 2;
+                                        -webkit-box-orient: vertical; 
+                                        white-space: normal">${response[i].content}</p>
                                 </div>`;
                 $(`#latest-${i+1}`).append(element);
             } else {
                 let element = `<img src="${response[i].imgUrl}" style="width: 100px; height: 100px; object-fit: cover;">
                                 <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
                                     <div class="mb-1" style="font-size: 13px;">
-                                        <a href="">${response[i].category}</a>
+                                        <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                         <span class="px-1">/</span>
                                         <span>${response[i].updatedDateManual}</span>
                                     </div>
-                                    <a class="h6 m-0" href="">${response[i].title}</a>
+                                    <a class="h6 m-0" href="/news/${response[i].id}">${response[i].title}</a>
                                 </div>`
                 $(`#latest-${i+1}`).append(element);
             }
@@ -234,19 +242,19 @@ $.ajax({
                             <img src="${response[i].imgUrl}" style="width: 100px; height: 100px; object-fit: cover;">
                             <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
                                 <div class="mb-1" style="font-size: 13px;">
-                                    <a href="">${response[i].category}</a>
+                                    <a href="/news/search/category?cateType=${response[i].category}">${response[i].category}</a>
                                     <span class="px-1">/</span>
                                     <span>${response[i].updatedDateManual}</span>
                                 </div>
-                                <a class="h6 m-0" href="">${response[i].title}</a>
+                                <a class="h6 m-0" href="/news/${response[i].id}">${response[i].title}</a>
                             </div>
                         </div>`
             $('#trending').append(element);
             if (i < 4) {
-                let topElement = `<div class="d-flex" style="background-color: #ffffff">
+                let topElement = `<div class="trending-top-slider d-flex" onclick="trendingTopSlider(${response[i].id})" style="background-color: #ffffff">
                     <img src="${response[i].imgUrl}" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="d-flex align-items-center bg-light px-3" style="height: 80px;">
-                        <a class="text-secondary font-weight-semi-bold" href="">${response[i].title}</a>
+                        <a class="text-secondary font-weight-semi-bold" href="/news/${response[i].id}">${response[i].title}</a>
                     </div>
                 </div>`
                 $('#top-slider').prepend(topElement);
@@ -255,3 +263,19 @@ $.ajax({
         runTopSlider();
     }
 });
+
+//trending-top-slider click
+function trendingTopSlider(id) {
+    window.location.href = '/news/' + id;
+}
+
+//today
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const today = new Date();
+const day = days[today.getDay()];
+const date = today.getDate()
+const month = months[today.getMonth()];
+const year = today.getFullYear();
+
+$('#today').text(day + ', ' + month + ' ' + date + ', ' + year);

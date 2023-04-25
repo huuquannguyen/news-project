@@ -139,7 +139,7 @@
             </div>
 
             <form novalidate="novalidate" id="update-news-form"
-                  method="post" th:object="${updateNewsRequest}" th:action="@{/news/update/} + ${news.id}" enctype="multipart/form-data">
+                  method="post" th:object="${updateNewsRequest}" th:action="@{/admin/news/update/} + ${news.id}" enctype="multipart/form-data">
 
                 <h4>Loại bài <img src="/img/edit-icon.png" class="edit e-news-mainPage"></h4>
                 <p th:text="${news.mainPage ? 'Bài chính' : 'Bài thường'}"></p>
@@ -224,7 +224,6 @@
                 </div>
 
                 <h4>Ảnh chính <img src="/img/edit-icon.png" class="edit e-news-img-div"> </h4>
-                <img th:src="@{${news.imgUrl}}" style="max-width: 100%" class="mb-3">
                 <div id="news-img-div" class="custom-file updated-news mb-3">
                     <input
                             type="file"
@@ -234,6 +233,7 @@
                     />
                     <label class="custom-file-label" for="news-img">Chọn ảnh chính mới</label>
                 </div>
+                <img th:src="@{${news.imgUrl}}" style="max-width: 100%" class="mb-3">
 
                 <th:block th:if="${news.paragraphs} != null">
                     <div th:each="para, stat : ${news.paragraphs}" style="margin: 20px; border-top: 3px red solid; padding: 10px">

@@ -23,8 +23,8 @@
     <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
         <h2 style="margin: 30px">Tạo bài báo</h2>
         <div class="bg-light" style="padding: 50px; width: 50%;">
-            <form novalidate="novalidate" id="create-news-form"
-                  method="post" th:object="${createNewsRequest}" action="/news/create" enctype="multipart/form-data">
+            <form id="create-news-form"
+                  method="post" th:object="${createNewsRequest}" th:action="@{/admin/news/create}" enctype="multipart/form-data">
                 <div class="form-row mb-3">
                     <div class="col-md-6">
                         <div class="form-check form-switch">
@@ -186,7 +186,7 @@
         const form = document.getElementById("create-news-form")
         createNewsBtn.addEventListener('click', function (event) {
             event.preventDefault();
-            form.setAttribute('action', '/news/create/process');
+            form.setAttribute('action', '/admin/news/create/process');
             form.submit();
         })
 

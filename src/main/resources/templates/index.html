@@ -23,6 +23,11 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <style>
+        .trending-top-slider {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,29 +62,28 @@
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                         <h3 class="m-0">Categories</h3>
-                        <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>
                     </div>
                     <div class="position-relative overflow-hidden mb-3" style="height: 80px;">
                         <img class="img-fluid w-100 h-100" src="img/cat-500x80-1.jpg" style="object-fit: cover;">
-                        <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
+                        <a href="/news/search/category?cateType=Business" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                             Business
                         </a>
                     </div>
                     <div class="position-relative overflow-hidden mb-3" style="height: 80px;">
                         <img class="img-fluid w-100 h-100" src="img/cat-500x80-2.jpg" style="object-fit: cover;">
-                        <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
+                        <a href="/news/search/category?cateType=Technology" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                             Technology
                         </a>
                     </div>
                     <div class="position-relative overflow-hidden mb-3" style="height: 80px;">
                         <img class="img-fluid w-100 h-100" src="img/cat-500x80-3.jpg" style="object-fit: cover;">
-                        <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
+                        <a href="/news/search/category?cateType=Entertainment" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                             Entertainment
                         </a>
                     </div>
                     <div class="position-relative overflow-hidden" style="height: 80px;">
                         <img class="img-fluid w-100 h-100" src="img/cat-500x80-4.jpg" style="object-fit: cover;">
-                        <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
+                        <a href="/news/search/category?cateType=Sports" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                             Sports
                         </a>
                     </div>
@@ -147,7 +151,7 @@
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                                 <h3 class="m-0">Popular</h3>
-                                <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>
+                                <a class="text-secondary font-weight-medium text-decoration-none" href="/news/search/popular">View All</a>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -173,7 +177,7 @@
                         <div class="col-12">
                             <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
                                 <h3 class="m-0">Latest</h3>
-                                <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>
+                                <a class="text-secondary font-weight-medium text-decoration-none" href="/news/search/latest">View All</a>
                             </div>
                         </div>
                         <div class="col-lg-6">
