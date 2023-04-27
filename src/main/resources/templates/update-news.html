@@ -163,7 +163,7 @@
                 <div class="control-group mb-3">
                     <input
                             type="text"
-                            class="form-control p-4 updated-news"
+                            class="form-control  updated-news"
                             id="news-title"
                             placeholder="Tiêu đề mới"
                             required="required"
@@ -174,14 +174,18 @@
                 <h4>Thể loại <img src="/img/edit-icon.png" class="edit e-news-category"></h4>
                 <p th:text="${news.category}"></p>
                 <div class="control-group mb-3">
-                    <input
-                            type="text"
-                            class="form-control p-4 updated-news"
+                    <select
+                            class="form-control  updated-news"
                             id="news-category"
-                            placeholder="Thể loại mới"
                             required="required"
                             th:field="*{category}"
-                    />
+                    >
+                        <option value="">Chọn thể loại</option>>
+                        <option th:value="Technology" th:text="Technology">Technology</option>
+                        <option th:value="Business" th:text="Business">Business</option>
+                        <option th:value="Sport" th:text="Sport">Sport</option>
+                        <option th:value="Entertainment" th:text="Entertainment">Entertainment</option>
+                    </select>
                 </div>
 
                 <h4>Thời gian tạo <img src="/img/edit-icon.png" class="edit e-news-updated-date-manual"></h4>
@@ -189,7 +193,7 @@
                 <div class="control-group mb-3">
                     <input
                             type="datetime-local"
-                            class="form-control p-4 updated-news"
+                            class="form-control  updated-news"
                             id="news-updated-date-manual"
                             placeholder="Chọn thời gian tạo mới"
                             required="required"
@@ -202,7 +206,7 @@
                 <div class="control-group mb-3">
                     <input
                             type="number"
-                            class="form-control p-4 updated-news"
+                            class="form-control  updated-news"
                             id="news-view"
                             placeholder="Nhập số view mới"
                             required="required"
@@ -211,10 +215,10 @@
                 </div>
 
                 <h4>Nội dụng <img src="/img/edit-icon.png" class="edit e-news-content"> </h4>
-                <p th:text="${news.content}"></p>
+                <p style="white-space: pre-wrap" th:text="${news.content}"></p>
                 <div class="control-group">
                       <textarea
-                              class="form-control p-4 updated-news mb-3"
+                              class="form-control  updated-news mb-3"
                               rows="4"
                               id="news-content"
                               placeholder="Nội dung mới"
@@ -244,7 +248,7 @@
                         <div class="control-group">
                             <input
                                     type="text"
-                                    class="form-control p-4 mb-3 updated-news"
+                                    class="form-control  mb-3 updated-news"
                                     th:id="'para-title-' + ${stat.index}"
                                     placeholder="Tiêu đề đoạn mới"
                                     th:field="*{updateParagraphRequests[__${stat.index}__].title}"
@@ -252,7 +256,7 @@
                         </div>
 
                         <h4>Nội dung đoạn <img src="/img/edit-icon.png" th:class="'edit e-para-content-' + ${stat.index}"> </h4>
-                        <p th:text="${news.paragraphs[__${stat.index}__].content}"></p>
+                        <p style="white-space: pre-wrap" th:text="${news.paragraphs[__${stat.index}__].content}"></p>
                         <div class="control-group">
                                 <textarea
                                         class="form-control mb-3 updated-news"
@@ -298,7 +302,7 @@
                     <div class="control-group">
                         <input
                                 type="text"
-                                class="form-control p-4 mb-3"
+                                class="form-control  mb-3"
                                 id="added-para-title"
                                 placeholder="Tiêu đề"
                                 th:field="*{addedParagraphRequests[__${stat.index}__].title}"
@@ -338,7 +342,7 @@
                 <div class="control-group" th:classappend="${updateNewsRequest.addedParaNumber == null} ? '' : d-none">
                     <input
                             type="number"
-                            class="form-control p-4"
+                            class="form-control "
                             id="para-number"
                             placeholder="Số đoạn văn thêm "
                             th:field="*{addedParaNumber}"

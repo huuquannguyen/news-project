@@ -1,0 +1,1 @@
+docker run -p 8880:8080 --name newsapp -d --net kc -e MYSQL_DB=mysqlnews:3306 -e MYSQL_USERNAME=username -e MYSQL_PASSWORD=password -e KC_URL=http://keycloak:8080 -e APP_URI=http://newsapp:8080 news:1.0

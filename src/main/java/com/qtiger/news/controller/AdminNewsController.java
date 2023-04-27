@@ -55,6 +55,9 @@ public class AdminNewsController {
     @PostMapping(value = "/create/process", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String createNewsProcess(@ModelAttribute @Valid CreateNewsRequest createNewsRequest,
                                     BindingResult bindingResult, Model model) throws IOException, AppException {
+        if (createNewsRequest.getImg().getSize() == 0) {
+            bindingResult.rejectValue("img", "img.error", "Ảnh chính không được để trống");
+        }
         if (bindingResult.hasErrors()) {
             List<String> errors = bindingResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
