@@ -151,12 +151,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private List<NewsEntity> searchByKeyTitle(String keyword, int limit) {
-        Pageable pageable = pagination(0, "updatedDate", limit);
+        Pageable pageable = pagination(0, "updatedDateManual", limit);
         return newsRepository.findByTitleContainingIgnoreCase(keyword, pageable).toList();
     }
 
     private List<NewsEntity> searchMainPage() {
-        Pageable pageable = pagination(0, "updatedDate", 3);
+        Pageable pageable = pagination(0, "updatedDateManual", 3);
         List<NewsEntity> newsList = newsRepository.findByMainPageIsTrue(pageable).toList();
         List<NewsEntity> result = new ArrayList<>(newsList);
         if (newsList.size() < 3) {
@@ -175,7 +175,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private List<NewsEntity> searchLatest (String keyword, int limit) {
-        Pageable pageable = pagination(0, "updatedDate", limit);
+        Pageable pageable = pagination(0, "updatedDateManual", limit);
 
         return searchWithKeyword(newsRepository.findAll(pageable).toList(), keyword);
     }
