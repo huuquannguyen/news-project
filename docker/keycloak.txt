@@ -2,4 +2,4 @@ Mysql:
 docker run -p 3360:3306 --name mysql -v C:/Users/pc/Desktop/project/keycloak/mysql:/var/lib/mysql -d --net kc -e MYSQL_DATABASE=keycloak -e MYSQL_USER=keycloak -e MYSQL_PASSWORD=password -e MYSQL_ROOT_PASSWORD=root mysql
 
 Keycloak:
-docker run -p 8080:8080 --name keycloak -d --net kc -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_DB=mysql -e KC_DB_URL=jdbc:mysql://mysql:3306/keycloak -e KC_DB_USERNAME=keycloak -e KC_DB_PASSWORD=password quay.io/keycloak/keycloak start-dev --log-level=info,org.keycloak.events:debug
+docker run -p 80:8080 --name keycloak -d --net kc -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_DB=mysql -e KC_DB_URL=jdbc:mysql://database-1.cb44kjvxukqm.ap-southeast-1.rds.amazonaws.com:3306/keycloak -e KC_DB_USERNAME=admin -e KC_DB_PASSWORD=Tu1den10 quay.io/keycloak/keycloak start-dev --log-level=info,org.keycloak.events:debug

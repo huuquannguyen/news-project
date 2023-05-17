@@ -1,5 +1,6 @@
 package com.qtiger.news.config;
 
+//import com.qtiger.news.security.CognitoLogoutHandler;
 import com.qtiger.news.security.KeycloakLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,8 @@ public class SecurityConfig {
 
     private final KeycloakLogoutHandler keycloakLogoutHandler;
 
+//    private final CognitoLogoutHandler cognitoLogoutHandler;
+
     @Bean
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
@@ -31,10 +34,12 @@ public class SecurityConfig {
                 .authenticated()
                 .anyRequest()
                 .permitAll();
-        http.oauth2Login()
-                .and()
-                .logout()
+        http.oauth2Login();
+//                .redirectionEndpoint()
+//                .baseUri("/redirect");
+        http.logout()
                 .addLogoutHandler(keycloakLogoutHandler)
+//                .logoutSuccessHandler(cognitoLogoutHandler)
                 .logoutSuccessUrl("/");
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();

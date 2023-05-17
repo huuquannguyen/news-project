@@ -1,1 +1,1 @@
-docker run -p 8880:8880 --name newsapp -d --net kc -e MYSQL_DB=mysqlnews:3306 -e MYSQL_USERNAME=username -e MYSQL_PASSWORD=password -e KC_URL=http://keycloak:8080 -e APP_URI=http://newsapp:8880 news
+docker run -p 80:8880 --name newsapp -d --net kc -e MYSQL_DB=database-1.cb44kjvxukqm.ap-southeast-1.rds.amazonaws.com:3306 -e MYSQL_USERNAME=admin -e MYSQL_PASSWORD=Tu1den10 -e KC_URL=http://ec2-54-169-141-250.ap-southeast-1.compute.amazonaws.com -e APP_URI=http://newsapp:8880 07071998/newsapp:v4
