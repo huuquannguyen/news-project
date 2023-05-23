@@ -33,7 +33,10 @@ public class SecurityConfig {
                 .antMatchers("/admin/**")
                 .authenticated()
                 .anyRequest()
-                .permitAll();
+                .permitAll()
+                .and()
+                .csrf()
+                .disable();
         http.oauth2Login();
 //                .redirectionEndpoint()
 //                .baseUri("/redirect");
