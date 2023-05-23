@@ -35,6 +35,17 @@ public class NewsEntity {
 
     private boolean mainPage;
 
+    private String createdBy;
+
+    private String tag1;
+
+    private String tag2;
+
+    private String tag3;
+
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
     @CreatedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd MMM yyyy")
     private Date createdDate;
