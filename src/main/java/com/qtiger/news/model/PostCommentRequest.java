@@ -7,10 +7,8 @@ public class PostCommentRequest {
 
     Long parentId;
 
-    String replyName;
+    Long replyCommentId;
 
     String content;
-
-    String replyEmail;
 
 }

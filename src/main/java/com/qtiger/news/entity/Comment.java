@@ -9,7 +9,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,16 +22,22 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JsonIgnore
     private NewsEntity news;
 
     private String content;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> commentChildren = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
-    private String replyName;
+    private String replyUserId;
+
+    private String replyUserName;
 
     private String createdName;
 
@@ -44,6 +52,13 @@ public class Comment {
     @JsonFormat(timezone = "Asia/Bangkok", shape = JsonFormat.Shape.STRING, pattern="dd MMM yyyy, HH:mm")
     private Date updatedDate;
 
-
+    @PreRemove
+    public void removeChildrenComment() {
+        Long id = this.getId();
+        this.getCommentChildren().forEach(c -> c.setParentComment(null));
+        this.getCommentChildren().clear();
+        this.getNews().getComments().removeIf(c -> c.getId().equals(id));
+        this.setNews(null);
+    }
 
 }

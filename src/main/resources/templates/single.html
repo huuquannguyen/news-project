@@ -140,6 +140,17 @@
         .see-answers:hover {
             color: black;
         }
+
+        .comment-img {
+            cursor: pointer;
+            width: 25px;
+            padding: 3px;
+            border-radius: 10%;
+        }
+
+        .comment-img:hover {
+            box-shadow: 1px 1px 3px;
+        }
     </style>
 </head>
 
@@ -225,49 +236,97 @@
                             <div id="comments" class="media-body">
                                 <th:block th:each="comment : ${news.comments}">
                                     <th:block th:if="${comment.parentComment == null}">
-                                        <div class="comment-block" style="padding: 15px; background-color: #efefef">
-                                            <h6>
+                                        <div class="comment-block" th:id="'comment-' + ${comment.id}"
+                                             style="padding: 15px; background-color: #efefef">
+                                            <h6 th:data-commentid="${comment.id}">
                                                 <span th:text="${comment.createdName}" style="color: #ED1C24"></span>
                                                 <small><i th:text="${T(com.qtiger.news.util.ViewUtil).parseDateTime(comment.updatedDate)}"></i></small>
+                                                <img th:if="${#authentication.getName() == comment.createdBy}"
+                                                     src="/img/edit-icon.png" style="margin-left: 10px;"
+                                                     class="comment-action update-comment comment-img choose-action"
+                                                     th:data-commentId="${comment.id}">
+                                                <img th:if="${#authentication.getName() == comment.createdBy || admin != null}"
+                                                     src="/img/bin-icon.png" style="margin-left: 7px"
+                                                     class="comment-action delete-comment comment-img choose-action"
+                                                     th:data-commentId="${comment.id}">
+                                                <img src="/img/check-icon.png" style="margin-left: 10px;"
+                                                     class="comment-action comment-img confirm-action"
+                                                     th:data-commentActionDo="true"
+                                                     th:data-commentId="${comment.id}" hidden>
+                                                <img src="/img/close-icon.png" style="margin-left: 7px"
+                                                     class="comment-img confirm-action"
+                                                     th:data-closeAction="true"
+                                                     th:data-commentId="${comment.id}" hidden>
                                             </h6>
                                             <div>
-                                                <p th:text="${comment.content}"></p>
+                                                <p th:id="'comment-content-text-' + ${comment.id}"
+                                                   th:text="${comment.content}"></p>
                                                 <textarea th:id="'comment-content-' + ${comment.id}"
                                                           th:data-parentId="${comment.id}"
-                                                          th:data-replyName="${comment.createdName}"
-                                                          th:data-replyEmail="${comment.createdBy}"
+                                                          th:data-replyCommentId="${comment.id}"
                                                           cols="30" rows="1" class="form-control comment-area mb-2" hidden></textarea>
+                                                <textarea th:id="'update-comment-content-' + ${comment.id}"
+                                                          cols="30" rows="1" class="form-control comment-area mb-2" hidden>[[${comment.content}]]</textarea>
 
-                                                <button class="comment_btn btn btn-sm btn-outline-secondary"
+                                                <button class="comment_btn btn btn-sm btn-outline-secondary reply"
                                                         th:data-commentBtnId="${comment.id}">Reply</button>
+
+                                                <button class="comment_btn btn btn-sm btn-outline-secondary comment"
+                                                        th:data-commentBtnId="${comment.id}"
+                                                        th:data-addComment="true">Comment</button>
 
                                                 <button th:data-commentBtnId="${comment.id}"
                                                         class="cancel-reply btn btn-sm btn-outline-secondary" hidden>Cancel</button>
                                             </div>
 
-                                            <p class="see-answers" th:data-commentId="${comment.id}">See <span class="comment-number"
-                                                         th:data-commentId="${comment.id}"
-                                                         th:text="${T(com.qtiger.news.util.ViewUtil).getChildCommentNumber(comment.id, news.comments)}"></span> answers</p>
+                                            <p class="see-answers" th:data-commentId="${comment.id}">See
+                                                <span class="comment-number" th:data-commentId="${comment.id}" th:text="${comment.getCommentChildren().size()}"></span>
+                                                <span class="answer" th:if="${comment.getCommentChildren().size() > 1}">answers</span>
+                                                <span class="answer" th:unless="${comment.getCommentChildren().size() > 1}">answer</span>
+                                            </p>
 
                                             <div class="sub-comments" th:data-parentCmtId="${comment.id}">
                                                 <th:block th:each="commentChild : ${news.comments}">
-                                                    <div class="media mt-4 ml-5"
+                                                    <div class="media mt-4 ml-5 sub-comment" th:id="'sub-comment-' + ${commentChild.id}"
                                                          th:if="${commentChild.parentComment != null && commentChild.parentComment.id == comment.id}">
                                                         <div class="media-body">
-                                                            <h6>
-                                                                <span th:text="${commentChild.replyName != null ?
-                                                                    commentChild.createdName + '<span> &gt; <span>' + commentChild.replyName :
-                                                                    commentChild.createdName}">
+                                                            <h6 th:data-commentid="${commentChild.id}">
+                                                                <span th:text="${commentChild.createdName}"
+                                                                      th:style="${commentChild.createdBy == commentChild.parentComment.createdBy} ? 'color:#ED1C24' : 'color:#343a40'">
                                                                 </span>
+                                                                <th:block th:if="${commentChild.replyUserId != null}">
+                                                                    <i class='fas fa-caret-right m-2'></i>
+                                                                    <span th:text="${commentChild.replyUserName}"
+                                                                          th:style="${commentChild.replyUserId == commentChild.parentComment.createdBy} ? 'color:#ED1C24' : 'color:#343a40'">
+                                                                    </span>
+                                                                </th:block>
                                                                 <small><i th:text="${T(com.qtiger.news.util.ViewUtil).parseDateTime(commentChild.updatedDate)}"></i></small>
+                                                                <img th:if="${#authentication.getName() == commentChild.createdBy}"
+                                                                     src="/img/edit-icon.png" style="margin-left: 10px;"
+                                                                     class="comment-action update-comment comment-img choose-action"
+                                                                     th:data-commentId="${commentChild.id}">
+                                                                <img th:if="${#authentication.getName() == commentChild.createdBy || admin != null}"
+                                                                     src="/img/bin-icon.png" style="margin-left: 7px"
+                                                                     class="comment-action delete-comment comment-img choose-action"
+                                                                     th:data-commentId="${commentChild.id}">
+                                                                <img src="/img/check-icon.png" style="margin-left: 10px;"
+                                                                     class="comment-action comment-img confirm-action"
+                                                                     th:data-commentActionDo="true"
+                                                                     th:data-commentId="${commentChild.id}" hidden>
+                                                                <img src="/img/close-icon.png" style="margin-left: 7px"
+                                                                     class="comment-img confirm-action"
+                                                                     th:data-closeAction="true"
+                                                                     th:data-commentId="${commentChild.id}" hidden>
                                                             </h6>
                                                             <div>
-                                                                <p th:text="${commentChild.content}"></p>
+                                                                <p th:id="'comment-content-text-' + ${commentChild.id}"
+                                                                   th:text="${commentChild.content}"></p>
                                                                 <textarea th:id="'comment-content-' + ${commentChild.id}"
                                                                           th:data-parentId="${comment.id}"
-                                                                          th:data-replyName="${commentChild.createdName}"
-                                                                          th:data-replyEmail="${commentChild.createdBy}"
+                                                                          th:data-replyCommentId="${commentChild.id}"
                                                                           cols="30" rows="1" class="form-control comment-area mb-2" hidden></textarea>
+                                                                <textarea th:id="'update-comment-content-' + ${commentChild.id}"
+                                                                          cols="30" rows="1" class="form-control comment-area mb-2" hidden>[[${commentChild.content}]]</textarea>
                                                                 <button th:data-commentBtnId="${commentChild.id}"
                                                                         class="comment_btn btn btn-sm btn-outline-secondary">Reply</button>
                                                                 <button th:data-commentBtnId="${commentChild.id}"
@@ -394,25 +453,42 @@
                     },
                     statusCode: {
                         403: function (xhr) {
-                            location.href = '/oauth2/authorization/keycloak'
+                            location.href = '/oauth2/authorization/keycloak';
+                        },
+                        401: function (xhr) {
+                            location.href = '/oauth2/authorization/keycloak';
                         }
                     },
                     success: function (comment) {
                         $('#comments').append(`
-                                   <div class="comment-block" style="padding: 15px; background-color: #efefef">
-                                         <h6>
+                                   <div class="comment-block" style="padding: 15px; background-color: #efefef" id="comment-${comment.id}">
+                                         <h6 data-commentid="${comment.id}">
                                             <span style="color: #ED1C24">${comment.createdName}</span>
                                             <small><i>${comment.updatedDate}</i></small>
+                                            <img alt="update" src="/img/edit-icon.png" style="margin-left: 10px;" class="comment-action update-comment comment-img choose-action" data-commentId="${comment.id}">
+                                            <img src="/img/bin-icon.png" style="margin-left: 7px" class="comment-action delete-comment comment-img choose-action" alt="delete" data-commentId="${comment.id}">
+                                            <img src="/img/check-icon.png" style="margin-left: 10px;"
+                                                 class="comment-action comment-img confirm-action"
+                                                 data-commentActionDo="true"
+                                                 data-commentId="${comment.id}" alt="check" hidden>
+                                            <img src="/img/close-icon.png" style="margin-left: 7px"
+                                                 class="comment-img confirm-action"
+                                                 data-closeaction="true"
+                                                 data-commentId="${comment.id}" alt="close" hidden>
                                         </h6>
                                         <div>
-                                            <p>${comment.content}</p>
+                                            <p id="comment-content-text-${comment.id}">${comment.content}</p>
                                             <textarea id='comment-content-${comment.id}'
                                                       data-parentId="${comment.id}"
-                                                      data-replyName='${comment.createdName}'
-                                                      data-replyEmail='${comment.createdBy}'
+                                                      data-replyCommentId='${comment.id}'
                                                       cols="30" rows="1" class="form-control comment-area mb-2" hidden></textarea>
-                                            <button class="comment_btn btn btn-sm btn-outline-secondary"
+                                            <textarea id='update-comment-content-${comment.id}'
+                                                      cols="30" rows="1" class="form-control comment-area mb-2" hidden>${comment.content}</textarea>
+                                            <button class="comment_btn btn btn-sm btn-outline-secondary reply"
                                                     data-commentBtnId="${comment.id}">Reply</button>
+                                            <button class="comment_btn btn btn-sm btn-outline-secondary comment"
+                                                    data-commentBtnId="${comment.id}"
+                                                    data-addComment="true">Comment</button>
                                             <button data-commentBtnId="${comment.id}"
                                                         class="cancel-reply btn btn-sm btn-outline-secondary" hidden>Cancel</button>
                                         </div>
@@ -432,45 +508,61 @@
             })
 
             $(document).on('click', '.comment_btn', function (){
+                let isAddComment = $(this).attr('data-addcomment');
                 if (!!$(this).attr('comment_btn_do')) {
                     const commentBtnId = $(this).attr('data-commentbtnid');
                     const commentElement = $('#comment-content-' + commentBtnId);
                     const content = commentElement.val();
                     const parentId = commentElement.attr('data-parentid');
-                    const replyName = commentElement.attr('data-replyname');
-                    const replyEmail = commentElement.attr('data-replyemail');
+                    let replyCommentId = commentElement.attr('data-replycommentid');
+                    if (isAddComment) {
+                        replyCommentId = null;
+                    }
                     $.ajax({
                         async: false,
                         url: `/api/news/${newsId}/comment`,
                         type: 'post',
                         data: {
                             parentId: parentId,
-                            replyName: replyName,
-                            content: content,
-                            replyEmail: replyEmail
+                            replyCommentId: replyCommentId,
+                            content: content
                         },
                         statusCode: {
                             403: function (xhr) {
-                                location.href = '/oauth2/authorization/keycloak'
+                                location.href = '/oauth2/authorization/keycloak';
+                            },
+                            401: function (xhr) {
+                                location.href = '/oauth2/authorization/keycloak';
                             }
                         },
                         success: function (comment) {
-                            console.log(comment.updatedDate);
                             const subComments = $(`.sub-comments[data-parentcmtid=${comment.parentComment.id}]`);
                             subComments.append(`
-                                                <div class="media mt-4 ml-5">
+                                                <div class="media mt-4 ml-5 sub-comment" id="sub-comment-${comment.id}">
                                                     <div class="media-body">
-                                                        <h6>
-                                                            <span>${comment.replyName != null ? comment.createdName + '<span> &gt; <span>' + comment.replyName : comment.createdName}</span>
+                                                        <h6 data-commentid="${comment.id}">
+                                                            <span style="color: ${comment.createdBy === comment.parentComment.createdBy ? '#ED1C24' : '#343a40'}">${comment.createdName}</span>
+                                                            ${comment.replyUserId != null ? `<i class="fas fa-caret-right m-2"></i><span style="color: ${comment.replyUserId === comment.parentComment.createdBy ? '#ED1C24' : '#343a40'}">${comment.replyUserName}</span>` : ''}
                                                             <small><i>${comment.updatedDate}</i></small>
+                                                            <img alt="update" src="/img/edit-icon.png" style="margin-left: 10px;" class="comment-action update-comment comment-img choose-action" data-commentId="${comment.id}">
+                                                            <img src="/img/bin-icon.png" style="margin-left: 7px" class="comment-action delete-comment comment-img choose-action" alt="delete" data-commentId="${comment.id}">
+                                                            <img src="/img/check-icon.png" style="margin-left: 10px;"
+                                                                 class="comment-action comment-img confirm-action"
+                                                                 data-commentactiondo="true"
+                                                                 data-commentId="${comment.id}" alt="check" hidden>
+                                                            <img src="/img/close-icon.png" style="margin-left: 7px"
+                                                                 class="comment-img confirm-action"
+                                                                 data-closeaction="true"
+                                                                 data-commentId="${comment.id}" alt="close" hidden>
                                                         </h6>
                                                         <div>
-                                                            <p>${comment.content}</p>
+                                                            <p id="comment-content-text-${comment.id}">${comment.content}</p>
                                                             <textarea id='comment-content-${comment.id}'
                                                                   data-parentId="${comment.parentComment.id}"
-                                                                  data-replyName="${comment.createdName}"
-                                                                  data-replyEmail="${comment.createdBy}"
+                                                                  data-replyCommentId="${comment.id}"
                                                                   cols="30" rows="1" class="form-control comment-area mb-2" hidden></textarea>
+                                                            <textarea id='update-comment-content-${comment.id}'
+                                                                  cols="30" rows="1" class="form-control comment-area mb-2" hidden>${comment.content}</textarea>
                                                             <button data-commentBtnId="${comment.id}"
                                                                     class="comment_btn btn btn-sm btn-outline-secondary">Reply</button>
                                                             <button data-commentBtnId="${comment.id}"
@@ -482,10 +574,12 @@
                                                 </div>`);
 
                             const commentNumberEl = document.querySelector(`.comment-number[data-commentid='${comment.parentComment.id}']`);
-                            commentNumberEl.textContent = Number(commentNumberEl.textContent) + 1;
+                            let newCommentNumber = Number(commentNumberEl.textContent) + 1
+                            commentNumberEl.textContent = newCommentNumber;
 
                             const seeAnswersEl = document.querySelector(`.see-answers[data-commentid='${comment.parentComment.id}']`);
-                            seeAnswersEl.innerHTML = `Hide <span class="comment-number" data-commentid="${comment.parentComment.id}">${commentNumberEl.textContent}</span> answers`;
+                            seeAnswersEl.innerHTML = `Hide <span class="comment-number" data-commentid="${comment.parentComment.id}">${commentNumberEl.textContent}</span>
+                                        <span class="answer" data-commentid=${comment.parentComment.id}>${newCommentNumber > 1 ? 'answers' : 'answer'}</span>`;
                             seeAnswersEl.removeAttribute('hidden');
 
                             subComments.attr('hidden', false);
@@ -498,12 +592,19 @@
                     })
                     $(`#comment-content-${commentBtnId}`).attr('hidden', true).val("");
                     $(`.cancel-reply[data-commentbtnid=${commentBtnId}]`).attr('hidden', true);
+                    $(`.reply[data-commentbtnid=${commentBtnId}]`).removeAttr('hidden');
+                    $(`.comment[data-commentbtnid=${commentBtnId}]`).removeAttr('hidden');
                     $(this).removeAttr('comment_btn_do');
                 } else {
                     $(this).attr('comment_btn_do', true);
                     const commentBtnId = $(this).attr('data-commentbtnid');
                     $(`#comment-content-${commentBtnId}`).removeAttr('hidden');
                     $(`.cancel-reply[data-commentbtnid=${commentBtnId}]`).removeAttr('hidden');
+                    if (isAddComment) {
+                        $(`.reply[data-commentbtnid=${commentBtnId}]`).attr('hidden', true);
+                    } else {
+                        $(`.comment[data-commentbtnid=${commentBtnId}]`).attr('hidden', true);
+                    }
                 }
             })
 
@@ -512,12 +613,26 @@
                 $(`#comment-content-${commentBtnId}`).attr('hidden', true);
                 $(this).attr('hidden', true);
                 $(`.comment_btn[data-commentbtnid=${commentBtnId}]`).removeAttr('comment_btn_do');
+                $(`.reply[data-commentbtnid=${commentBtnId}]`).removeAttr('hidden');
+                $(`.comment[data-commentbtnid=${commentBtnId}]`).removeAttr('hidden');
             })
 
             function increaseComment() {
                 let nextNumber = Number($('#total-comment').text().split(' ')[0]) + 1;
                 if (nextNumber === 1) {
                     $('#total-comment').text(`${nextNumber} Comment`)
+                } else {
+                    $('#total-comment').text(`${nextNumber} Comments`)
+                }
+
+            }
+
+            function decreaseComment(totalDeleted) {
+                let nextNumber = Number($('#total-comment').text().split(' ')[0]) - totalDeleted;
+                if (nextNumber === 1) {
+                    $('#total-comment').text(`${nextNumber} Comment`)
+                } else if (nextNumber <= 0) {
+                    $('#total-comment').text('0 Comment');
                 } else {
                     $('#total-comment').text(`${nextNumber} Comments`)
                 }
@@ -539,12 +654,117 @@
                     const commentNumber = document.querySelector(`.comment-number[data-commentid='${commentId}']`).textContent;
                     const seeAnswersEl = document.querySelector(`.see-answers[data-commentid='${commentId}']`);
                     if (attr) {
-                        seeAnswersEl.innerHTML = `Hide <span class="comment-number" data-commentid=${commentId}>${commentNumber}</span> answers`;
+                        seeAnswersEl.innerHTML = `Hide <span class="comment-number" data-commentid=${commentId}>${commentNumber}</span>
+                                        <span class="answer" data-commentid=${commentId}>${Number(commentNumber) > 1 ? 'answers' : 'answer'}</span>`;
                     } else {
-                        seeAnswersEl.innerHTML = `Show <span class="comment-number" data-commentid=${commentId}>${commentNumber}</span> answers`;
+                        seeAnswersEl.innerHTML = `Show <span class="comment-number" data-commentid=${commentId}>${commentNumber}</span>
+                                        <span class="answer" data-commentid=${commentId}>${Number(commentNumber) > 1 ? 'answers' : 'answer'}</span>`;
                     }
                     return !attr;
                 });
+            })
+
+            //update and delete comment
+
+            $(document).on('click', '.comment-action', function() {
+                const isUpdateAction = $(this).attr('class').split(/\s+/).includes('update-comment');
+                const isDeleteAction = $(this).attr('class').split(/\s+/).includes('delete-comment');
+                const commentId = $(this).attr('data-commentid');
+                if (!!$(this).attr('data-commentactiondo')) {
+                    if (isUpdateAction) {
+                        $.ajax({
+                            async: false,
+                            url: `/api/news/${newsId}/comment/update`,
+                            type: 'post',
+                            data : {
+                                commentId: commentId,
+                                content: $(`#update-comment-content-${commentId}`).val()
+                            },
+                            statusCode: {
+                                403: function (xhr) {
+                                    location.href = '/oauth2/authorization/keycloak';
+                                },
+                                401: function (xhr) {
+                                    location.href = '/oauth2/authorization/keycloak';
+                                },
+                            },
+                            success: function (comment) {
+                                $(`#comment-content-text-${comment.id}`).text(comment.content);
+                            },
+                            error: function (comment) {
+                                console.log(comment);
+                            }
+                        })
+                    }
+                    if (isDeleteAction) {
+                        $.ajax({
+                            async: false,
+                            url: `/api/news/${newsId}/comment/delete`,
+                            type: 'post',
+                            data : {
+                                commentId: commentId
+                            },
+                            statusCode: {
+                                403: function (xhr) {
+                                    location.href = '/oauth2/authorization/keycloak';
+                                },
+                                401: function (xhr) {
+                                    location.href = '/oauth2/authorization/keycloak';
+                                },
+                            },
+                            success: function (response) {
+                                if (response.subComment) {
+                                    $(`#sub-comment-${response.comment.id}`).remove();
+
+                                    let seeAnswers = $(`.see-answers[data-commentid=${response.comment.parentComment.id}]`);
+                                    let commentNumberEl = $(`.comment-number[data-commentid=${response.comment.parentComment.id}]`);
+                                    let commentNumber = Number(commentNumberEl.text()) - response.totalDeleted;
+                                    if (commentNumber <= 0) {
+                                        commentNumberEl.text(0);
+                                        seeAnswers.attr('hidden', true);
+                                    } else {
+                                        commentNumberEl.text(commentNumber);
+                                        $(`.answer[data-commentid=${response.comment.parentComment.id}]`).text(`${commentNumber > 1 ? 'answers' : 'answer'}`)
+                                    }
+                                } else {
+                                    $(`#comment-${response.comment.id}`).remove();
+                                }
+                                decreaseComment(response.totalDeleted);
+                            },
+                            error: function (comment) {
+                                console.log(comment);
+                            }
+                        })
+                    }
+                    showDefaultView(commentId);
+                } else {
+                    $(`.choose-action[data-commentid=${commentId}]`).attr('hidden', true);
+
+                    const confirmAction = $(`.confirm-action[data-commentid=${commentId}]`)
+                    confirmAction.removeAttr('hidden');
+                    if (isUpdateAction) {
+                        confirmAction.addClass('update-comment');
+                        $(`#update-comment-content-${commentId}`).removeAttr('hidden');
+                        $(`#comment-content-text-${commentId}`).attr('hidden', true);
+                    }
+                    if (isDeleteAction) {
+                        confirmAction.addClass('delete-comment');
+                    }
+                }
+            })
+
+            function showDefaultView(commentId) {
+                $(`#update-comment-content-${commentId}`).attr('hidden', true);
+                $(`#comment-content-text-${commentId}`).removeAttr('hidden');
+                $(`.choose-action[data-commentid=${commentId}]`).removeAttr('hidden');
+
+                const confirmAction = $(`.confirm-action[data-commentid=${commentId}]`);
+                confirmAction.attr('hidden', true);
+                confirmAction.removeClass('update-comment delete-comment');
+            }
+
+            $(document).on('click', 'img[data-closeaction=true]', function () {
+                showDefaultView($(this).attr('data-commentid'));
             })
 
         })
