@@ -2,6 +2,7 @@ package com.qtiger.news.service.impl;
 
 import com.qtiger.news.entity.Comment;
 import com.qtiger.news.entity.NewsEntity;
+import com.qtiger.news.model.DeleteCommentResponse;
 import com.qtiger.news.model.PostCommentRequest;
 import com.qtiger.news.repository.CommentRepository;
 import com.qtiger.news.repository.NewsRepository;
@@ -13,6 +14,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,71 +36,99 @@ public class CommentServiceImpl implements CommentService {
             return null;
         }
         comment.setNews(news);
-        if (request.getParentId() != null) {
-            Comment parentComment = commentRepository.findById(request.getParentId()).orElse(null);
-            if (parentComment == null) {
-                log.error("The comment's parent with id {} does not exist.", request.getParentId());
-            } else {
-                comment.setParentComment(parentComment);
-            }
-        }
         OidcUser user = (OidcUser) authentication.getPrincipal();
-        if (request.getReplyName() != null && !user.getEmail().equals(request.getReplyEmail())) {
-            boolean existReplyName = news.getComments().stream()
-                    .map(Comment::getCreatedName)
-                    .anyMatch(n -> n.equals(request.getReplyName()));
-            if (existReplyName) {
-                comment.setReplyName(request.getReplyName());
+        if (request.getReplyCommentId() != null) {
+            Comment replyComment = news.getComments().stream()
+                    .filter(c -> Objects.equals(c.getId(), request.getReplyCommentId()))
+                    .findFirst()
+                    .orElse(null);
+            if (replyComment != null && !replyComment.getCreatedBy().equals(user.getSubject())) {
+                comment.setReplyUserId(replyComment.getCreatedBy());
+                comment.setReplyUserName(replyComment.getCreatedName());
             } else {
-                log.error("Reply name {} does not exist.", request.getReplyName());
+                log.error("The replied comment with id {} does not exist in news with id {}", request.getReplyCommentId(), news.getId());
             }
         }
         comment.setContent(request.getContent());
         comment.setCreatedName((String) user.getUserInfo().getClaims().get("name"));
-
-        return commentRepository.save(comment);
-    }
-
-    @Override
-    public Comment updateComment(Long newsId, Long commentId, String content, Authentication authentication) {
-        OidcUser user = (OidcUser) authentication.getPrincipal();
-
-        Comment comment = checkValidComment(newsId, commentId);
-        if (comment == null) {
-            return null;
-        }
-        if (comment.getCreatedBy() != null && !comment.getCreatedBy().equals(user.getEmail())) {
-            log.error("The comment with id {} is not belong to {}", commentId, user.getEmail());
-        }
-        if (content != null && content.isBlank()) {
-            comment.setContent(content);
+        if (request.getParentId() != null) {
+            Comment parentComment = news.getComments().stream()
+                    .filter(c -> Objects.equals(c.getId(), request.getParentId()) && c.getParentComment() == null)
+                    .findFirst()
+                    .orElse(null);
+            if (parentComment == null) {
+                log.error("The comment's parent with id {} does not exist in news with id {}.", request.getParentId(), news.getId());
+                return null;
+            } else {
+                comment.setParentComment(parentComment);
+                comment = commentRepository.save(comment);
+                parentComment.getCommentChildren().add(comment);
+                commentRepository.save(parentComment);
+            }
+        } else {
+            return commentRepository.save(comment);
         }
         return comment;
     }
 
     @Override
-    public Long deleteComment(Long newsId, Long commentId, Authentication authentication) {
+    public Comment updateComment(Long newsId, Long commentId, String content, Authentication authentication) {
         OidcUser user = (OidcUser) authentication.getPrincipal();
-
-        Comment comment = checkValidComment(newsId, commentId);
+        NewsEntity news = newsRepository.findById(newsId).orElse(null);
+        Comment comment = checkValidComment(news, commentId);
         if (comment == null) {
             return null;
         }
-        boolean isAdmin = user.getAuthorities().stream()
+        if (comment.getCreatedBy() != null && !comment.getCreatedBy().equals(user.getSubject())) {
+            log.error("The comment with id {} is not belong to {}", commentId, user.getSubject());
+        }
+        if (content != null && !content.isBlank()) {
+            comment.setContent(content);
+            return commentRepository.save(comment);
+        }
+        return comment;
+    }
+
+    @Override
+    @Transactional
+    public DeleteCommentResponse deleteComment(Long newsId, Long commentId, Authentication authentication) {
+        OidcUser user = (OidcUser) authentication.getPrincipal();
+        NewsEntity news = newsRepository.findById(newsId).orElse(null);
+        if (news == null) {
+            log.error("News does not exist");
+            return null;
+        }
+        Comment comment = checkValidComment(news, commentId);
+        if (comment == null) {
+            return null;
+        }
+        boolean isAdmin = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch(a -> a.equals("ROLE_ADMIN"));
-        if (isAdmin || comment.getCreatedBy().equals(user.getEmail())) {
-            commentRepository.delete(comment);
-            return commentId;
+                .anyMatch(a -> a.equals("ROLE_admin"));
+        if (isAdmin || comment.getCreatedBy().equals(user.getSubject())) {
+            boolean isParentComment = comment.getParentComment() == null;
+            if (isParentComment) {
+                long totalDeletedComment = news.getComments().stream()
+                        .map(Comment::getParentComment)
+                        .filter(Objects::nonNull)
+                        .map(Comment::getId)
+                        .filter(e -> e.equals(commentId)).count() + 1;
+                commentRepository.delete(comment);
+                log.info("Comment id {} is deleted with its sub-comments.", commentId);
+                return new DeleteCommentResponse(comment, false, totalDeletedComment);
+            } else {
+                commentRepository.delete(comment);
+                log.info("Comment id {} is deleted with its reply comments", commentId);
+                return new DeleteCommentResponse(comment, true, 1);
+            }
         }
         log.error("The comment with id {} is not belong to {}", commentId, user.getEmail());
         return null;
     }
 
-    private Comment checkValidComment(Long newsId, Long commentId) {
-        NewsEntity news = newsRepository.findById(newsId).orElse(null);
+    private Comment checkValidComment(NewsEntity news, Long commentId) {
         if (news == null) {
-            log.error("News with id {} does not exist", newsId);
+            log.error("News does not exist");
             return null;
         }
         Comment comment = news.getComments().stream()
@@ -105,7 +136,7 @@ public class CommentServiceImpl implements CommentService {
                 .findFirst()
                 .orElse(null);
         if (comment == null) {
-            log.error("Comment with id {} does not exist in news with id {}", commentId, newsId);
+            log.error("Comment with id {} does not exist in news with id {}", commentId, news.getId());
             return null;
         }
         return comment;

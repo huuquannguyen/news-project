@@ -2,6 +2,7 @@ package com.qtiger.news.controller;
 
 import com.qtiger.news.entity.Comment;
 import com.qtiger.news.entity.NewsEntity;
+import com.qtiger.news.model.DeleteCommentResponse;
 import com.qtiger.news.model.PostCommentRequest;
 import com.qtiger.news.model.UpdateCommentRequest;
 import com.qtiger.news.service.CommentService;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,12 @@ public class NewsController {
     public String homePage(Authentication authentication, Model model) {
         if (Objects.nonNull(authentication)) {
             model.addAttribute("authenticated", true);
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(a -> a.equals("ROLE_admin"));
+            if (isAdmin) {
+                model.addAttribute("admin", true);
+            }
         }
         return "index.html";
     }
@@ -56,6 +65,12 @@ public class NewsController {
     public String singlePage(@PathVariable Long id, Model model, Authentication authentication) {
         if (Objects.nonNull(authentication)) {
             model.addAttribute("authenticated", true);
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(a -> a.equals("ROLE_admin"));
+            if (isAdmin) {
+                model.addAttribute("admin", true);
+            }
         }
         NewsEntity newsEntity = newsService.increaseView(id);
         if (!Objects.nonNull(newsEntity)) {
@@ -115,17 +130,16 @@ public class NewsController {
 
     @PostMapping("/api/news/{id}/comment")
     @ResponseBody
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Comment> postComment (@PathVariable(name = "id") Long newsId,
                                                 PostCommentRequest postCommentRequest,
                                                 Authentication authentication) {
-        if (Objects.isNull(authentication)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
         Comment comment = commentService.postComment(newsId, postCommentRequest, authentication);
         return ResponseEntity.ok().body(comment);
     }
 
     @PostMapping("/api/news/{id}/comment/update")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Comment> updateComment(@PathVariable(name = "id") Long newsId,
                                                  UpdateCommentRequest updateCommentRequest,
                                                  Authentication authentication) {
@@ -135,11 +149,11 @@ public class NewsController {
     }
 
     @PostMapping("/api/news/{id}/comment/delete")
-    public ResponseEntity<Long> deleteComment(@PathVariable(name = "id") Long newsId,
-                                              Long commentId,
-                                              Authentication authentication) {
-        Long deletedCommentId = commentService.deleteComment(newsId, commentId, authentication);
-        return ResponseEntity.ok().body(deletedCommentId);
+    public ResponseEntity<DeleteCommentResponse> deleteComment(@PathVariable(name = "id") Long newsId,
+                                                               Long commentId,
+                                                               Authentication authentication) {
+        DeleteCommentResponse response = commentService.deleteComment(newsId, commentId, authentication);
+        return ResponseEntity.ok().body(response);
     }
 
 }

@@ -20,6 +20,6 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
         return authentication.filter(a -> a.isAuthenticated() && !a.getPrincipal().equals("anonymousUser"))
                 .map(Authentication::getPrincipal)
                 .map(OidcUser.class::cast)
-                .map(OidcUser::getEmail);
+                .map(OidcUser::getSubject);
     }
 }

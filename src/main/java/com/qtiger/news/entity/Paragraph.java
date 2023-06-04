@@ -25,7 +25,7 @@ public class Paragraph {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JsonIgnore
     private NewsEntity news;
 }
