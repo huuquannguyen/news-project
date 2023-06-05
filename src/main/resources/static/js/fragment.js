@@ -112,6 +112,17 @@ if (pathNameSplit.includes('contact')) {
     $('#nav-home').addClass('active');
 }
 
+//tags
+$.ajax({
+    type: 'GET',
+    url: '/api/tag?limit=12',
+    success: function (response) {
+        response.forEach(function (tag) {
+            $('.fragment-tags').append(`<a href="/news/search/tag?tag=${tag}" class="btn btn-sm btn-outline-secondary m-1">${'#' + tag}</a>`)
+        })
+    }
+})
+
 
 //today
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

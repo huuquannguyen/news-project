@@ -15,10 +15,12 @@ import com.qtiger.news.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -68,6 +70,15 @@ public class NewsServiceImpl implements NewsService {
             }
             if (Objects.nonNull(updateNewsRequest.getView())) {
                 news.setView(updateNewsRequest.getView());
+            }
+            if (updateNewsRequest.getTag1() != null && !updateNewsRequest.getTag1().isBlank()) {
+                news.setTag1(StringUtils.trimAllWhitespace(updateNewsRequest.getTag1().toLowerCase()));
+            }
+            if (updateNewsRequest.getTag2() != null && !updateNewsRequest.getTag2().isBlank()) {
+                news.setTag2(StringUtils.trimAllWhitespace(updateNewsRequest.getTag2().toLowerCase()));
+            }
+            if (updateNewsRequest.getTag3() != null && !updateNewsRequest.getTag3().isBlank()) {
+                news.setTag3(StringUtils.trimAllWhitespace(updateNewsRequest.getTag3().toLowerCase()));
             }
             if (updateNewsRequest.getImg().getSize() > 0) {
                 news.setImgUrl(FileUtil.uploadFile(updateNewsRequest.getImg(), id, UploadType.NEWS_IMAGE, imageLocation));
@@ -121,7 +132,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<NewsEntity> searchListNews(String type, String cateType, String keyword, int limit) {
+    public List<NewsEntity> searchListNews(String type, String tag, String cateType, String keyword, int limit) {
         switch (type) {
             case "category" :
                 return searchByCategory(cateType, keyword, limit);
@@ -135,6 +146,8 @@ public class NewsServiceImpl implements NewsService {
                 return searchMainPage();
             case "key":
                 return searchByKeyTitle(keyword, limit);
+            case "tag":
+                return tag.isBlank() ? Collections.emptyList() : searchByTag(tag, keyword, limit);
             default:
                 return Collections.emptyList();
         }
@@ -150,9 +163,42 @@ public class NewsServiceImpl implements NewsService {
         return null;
     }
 
+    @Override
+    public List<String> getHottestTag(int limit) {
+        Pageable pageable = pagination(0, "view", 5);
+        Page<NewsEntity> newsList = newsRepository.findAll(pageable);
+        List<String> result = new ArrayList<>();
+        while (result.size() < limit) {
+            for (NewsEntity news : newsList) {
+                if (news.getTag1() != null && !news.getTag1().isBlank()) {
+                    result.add(news.getTag1());
+                }
+                if (news.getTag2() != null && !news.getTag2().isBlank()) {
+                    result.add(news.getTag2());
+                }
+                if (news.getTag3() != null && !news.getTag3().isBlank()) {
+                    result.add(news.getTag3());
+                }
+            }
+            if (newsList.hasNext()) {
+                pageable = pageable.next();
+                newsList = newsRepository.findAll(pageable);
+            } else {
+                break;
+            }
+        }
+        return result;
+    }
+
+    private List<NewsEntity> searchByTag(String tag, String keyword, int limit) {
+        Pageable pageable = pagination(0, "updatedDateManual", limit);
+        return searchWithKeyword(newsRepository.searchByTag(tag, pageable).toList(), keyword);
+    }
+
+
     private List<NewsEntity> searchByKeyTitle(String keyword, int limit) {
         Pageable pageable = pagination(0, "updatedDateManual", limit);
-        return newsRepository.findByTitleContainingIgnoreCase(keyword, pageable).toList();
+        return newsRepository.searchKeywordAndTags(keyword, pageable).toList();
     }
 
     private List<NewsEntity> searchMainPage() {
@@ -181,7 +227,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private List<NewsEntity> searchTrending (String keyword, int limit) {
-        List<NewsEntity> trending = searchByConstraintDate(limit, 1);
+        List<NewsEntity> trending = searchMostViewByConstraintDate(limit, 1);
         List<NewsEntity> result = new ArrayList<>(trending);
         if (result.size() < limit) {
             List<Long> trendingIds = trending.stream().map(NewsEntity::getId).collect(Collectors.toList());
@@ -193,16 +239,16 @@ public class NewsServiceImpl implements NewsService {
     }
 
     private List<NewsEntity> searchPopular (String keyword, int limit) {
-        return searchWithKeyword(searchByConstraintDate(limit ,7), keyword);
+        return searchWithKeyword(searchMostViewByConstraintDate(limit ,7), keyword);
     }
 
-    private List<NewsEntity> searchByConstraintDate(int limit, int dayNumber) {
+    private List<NewsEntity> searchMostViewByConstraintDate(int limit, int dayNumber) {
         Date today = new Date();
         long oneDay = 86400000L;
-        long oneWeekAgoMs = today.getTime() - oneDay * dayNumber;
-        Date oneWeekAgo = new Date(oneWeekAgoMs);
+        long daysAgoMs = today.getTime() - oneDay * dayNumber;
+        Date daysAgo = new Date(daysAgoMs);
         Pageable pageable = pagination(0, "view", limit);
-        return newsRepository.findByConstraintDate(oneWeekAgo, pageable).toList();
+        return newsRepository.findByConstraintDate(daysAgo, pageable).toList();
     }
 
     private List<NewsEntity> searchByCategory(String cateType, String keyword, int limit) {
@@ -234,6 +280,15 @@ public class NewsServiceImpl implements NewsService {
         news.setCategory(createNewsRequest.getCategory());
         news.setTitle(createNewsRequest.getTitle());
         news.setMainPage(createNewsRequest.isMainPage());
+        if (createNewsRequest.getTag1() != null && !createNewsRequest.getTag1().isBlank()) {
+            news.setTag1(StringUtils.trimAllWhitespace(createNewsRequest.getTag1().toLowerCase()));
+        }
+        if (createNewsRequest.getTag2() != null && !createNewsRequest.getTag2().isBlank()) {
+            news.setTag2(StringUtils.trimAllWhitespace(createNewsRequest.getTag2().toLowerCase()));
+        }
+        if (createNewsRequest.getTag3() != null && !createNewsRequest.getTag3().isBlank()) {
+            news.setTag3(StringUtils.trimAllWhitespace(createNewsRequest.getTag3().toLowerCase()));
+        }
         if (Objects.nonNull(createNewsRequest.getView())) {
             news.setView(createNewsRequest.getView());
         } else {

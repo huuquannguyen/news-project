@@ -206,7 +206,7 @@
                 <div class="control-group mb-3">
                     <input
                             type="number"
-                            class="form-control  updated-news"
+                            class="form-control updated-news"
                             id="news-view"
                             placeholder="Nhập số view mới"
                             required="required"
@@ -218,13 +218,31 @@
                 <p style="white-space: pre-wrap" th:text="${news.content}"></p>
                 <div class="control-group">
                       <textarea
-                              class="form-control  updated-news mb-3"
+                              class="form-control updated-news mb-3"
                               rows="4"
                               id="news-content"
                               placeholder="Nội dung mới"
                               required="required"
                               th:field="*{content}"
                       ></textarea>
+                </div>
+
+                <h4>Tag 1 <img src="/img/edit-icon.png" class="edit e-news-tag-1"> </h4>
+                <p th:text="${news.tag1}"></p>
+                <div class="control-group mb-3 ">
+                    <input type="text" class="form-control updated-news" id="news-tag-1" placeholder="Tag 1 mới" th:field="*{tag1}">
+                </div>
+
+                <h4>Tag 2 <img src="/img/edit-icon.png" class="edit e-news-tag-2"> </h4>
+                <p th:text="${news.tag2}"></p>
+                <div class="control-group mb-3">
+                    <input type="text" class="form-control updated-news" id="news-tag-2" placeholder="Tag 2 mới" th:field="*{tag2}">
+                </div>
+
+                <h4>Tag 3 <img src="/img/edit-icon.png" class="edit e-news-tag-3"> </h4>
+                <p th:text="${news.tag3}"></p>
+                <div class="control-group mb-3">
+                    <input type="text" class="form-control updated-news" id="news-tag-3" placeholder="Tag 3 mới" th:field="*{tag3}">
                 </div>
 
                 <h4>Ảnh chính <img src="/img/edit-icon.png" class="edit e-news-img-div"> </h4>

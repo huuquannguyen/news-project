@@ -101,6 +101,15 @@
                           th:field="*{content}"
                   ></textarea>
                 </div>
+                <div class="control-group mb-3">
+                  <input type="text" class="form-control" id="tag-1" placeholder="Tag 1" th:field="*{tag1}">
+                </div>
+                <div class="control-group mb-3">
+                    <input type="text" class="form-control" id="tag-2" placeholder="Tag 2" th:field="*{tag2}">
+                </div>
+                <div class="control-group mb-3">
+                    <input type="text" class="form-control" id="tag-3" placeholder="Tag 3" th:field="*{tag3}">
+                </div>
                 <div class="control-group mb-3" th:classappend="${createNewsRequest.paragraphNumber == null} ? '' : d-none">
                     <input
                             type="number"

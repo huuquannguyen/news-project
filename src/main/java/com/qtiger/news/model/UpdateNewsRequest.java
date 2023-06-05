@@ -13,6 +13,9 @@ public class UpdateNewsRequest {
     private String category;
     private String content;
     private MultipartFile img;
+    private String tag1;
+    private String tag2;
+    private String tag3;
     private Integer view;
     private Boolean mainPage;
     List<UpdateParagraphRequest> updateParagraphRequests = new ArrayList<>();

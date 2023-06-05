@@ -23,7 +23,11 @@ public interface NewsRepository extends JpaRepository<NewsEntity, Long> {
 
     Page<NewsEntity> findByMainPageIsTrue(Pageable pageable);
 
-    Page<NewsEntity> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    @Query("from NewsEntity n where lower(n.title) like lower(concat('%', :keyword, '%')) or n.tag1 = :keyword or n.tag2 = :keyword or n.tag3 = :keyword ")
+    Page<NewsEntity> searchKeywordAndTags(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("from NewsEntity n where n.tag1 = :tag or n.tag2 = :tag or n.tag3 = :tag")
+    Page<NewsEntity> searchByTag (@Param("tag") String tag, Pageable pageable);
 
     Page<NewsEntity> findAllByIdIsNotIn(List<Long> ids, Pageable pageable);
 }

@@ -151,6 +151,18 @@
         .comment-img:hover {
             box-shadow: 1px 1px 3px;
         }
+
+        .tag-link {
+            color: #6c757d;
+            font-size: 14px;
+            border: 1px solid #6c757d;
+            margin-right: 5px;
+        }
+
+        .tag-link:hover {
+            background-color: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 
@@ -196,9 +208,14 @@
                         <img class="img-fluid w-100" th:src="@{${news.imgUrl}}" style="object-fit: cover;">
                         <div class="overlay position-relative bg-light">
                             <div class="mb-3">
-                                <a href="" th:text="${news.category}"> News category </a>
+                                <a th:if="${news.tag1 != null}" class="tag-link btn"
+                                   th:href="@{/news/search/tag?tag=} + ${news.tag1}" th:text="'#' + ${news.tag1}"> Tag 1 </a>
+                                <a th:if="${news.tag2 != null}" class="tag-link btn"
+                                   th:href="@{/news/search/tag?tag=} + ${news.tag2}" th:text="'#' + ${news.tag2}"> Tag 2 </a>
+                                <a th:if="${news.tag3 != null}" class="tag-link btn"
+                                   th:href="@{/news/search/tag?tag=} + ${news.tag3}" th:text="'#' + ${news.tag3}"> Tag 3 </a>
                                 <span class="px-1">/</span>
-                                <span id="created-date"
+                                <span id="created-date" style="font-size: 14px"
                                       th:text="${T(com.qtiger.news.util.ViewUtil).parseDate(news.updatedDateManual)}">
                                 </span>
                             </div>

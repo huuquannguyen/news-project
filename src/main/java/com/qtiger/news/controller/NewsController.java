@@ -82,6 +82,7 @@ public class NewsController {
 
     @GetMapping("/news/search/{type}")
     public String newsList(@PathVariable String type,
+                             @RequestParam(required = false, defaultValue = "") String tag,
                              @RequestParam(required = false, defaultValue = "") String cateType,
                              @RequestParam(required = false, defaultValue = "") String keyword,
                              @RequestParam(required = false, defaultValue = "5") String limit,
@@ -99,6 +100,7 @@ public class NewsController {
         }
         String url = appUri + "/api/news/search/" + type;
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
+                .queryParam("tag", tag)
                 .queryParam("cateType", cateType)
                 .queryParam("keyword", keyword)
                 .queryParam("limit", limitNumber);
@@ -116,6 +118,7 @@ public class NewsController {
     @GetMapping("/api/news/search/{type}")
     @ResponseBody
     public ResponseEntity<List<NewsEntity>> searchListNews(@PathVariable String type,
+                                                           @RequestParam(required = false, defaultValue = "") String tag,
                                                            @RequestParam(required = false, defaultValue = "") String cateType,
                                                            @RequestParam(required = false, defaultValue = "") String keyword,
                                                            @RequestParam(required = false, defaultValue = "3") String limit) {
@@ -125,7 +128,7 @@ public class NewsController {
         } catch (NumberFormatException e) {
             limitNumber = 3;
         }
-        return ResponseEntity.ok().body(newsService.searchListNews(type, cateType.toLowerCase(), keyword, limitNumber));
+        return ResponseEntity.ok().body(newsService.searchListNews(type, tag.toLowerCase(), cateType.toLowerCase(), keyword, limitNumber));
     }
 
     @PostMapping("/api/news/{id}/comment")
@@ -153,6 +156,12 @@ public class NewsController {
                                                                Long commentId,
                                                                Authentication authentication) {
         DeleteCommentResponse response = commentService.deleteComment(newsId, commentId, authentication);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/api/tag")
+    public ResponseEntity<List<String>> getHottestTags(@RequestParam int limit) {
+        List<String> response = newsService.getHottestTag(limit);
         return ResponseEntity.ok().body(response);
     }
 
