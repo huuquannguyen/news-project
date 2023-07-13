@@ -12,7 +12,7 @@
 - Jquery
 - Docker
 ## NOTE
-I am developing another website about recuitment and jobs searching which is based on this news posting website.
+I am developing another website about recruitment and jobs searching which is based on this news posting website.
 For some reasons I have to keep the repository in private mode.
 Here is the demo version of that website (deploy using AWS)
 http://hubtjobs.cutetiger.link/
